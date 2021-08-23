@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-served-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+spec:
+  containers:
+  - args:
+    - sleep
+    - infinity
+    name: app
+    image: k8s.gcr.io/pause:3.1
+    ports:
+    - containerPort: 80
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: serving
+            operator: DoesNotExist
+

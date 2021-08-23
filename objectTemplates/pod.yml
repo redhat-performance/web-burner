@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+spec:
+  containers:
+  - args:
+    - sleep
+    - infinity
+    name: app
+    image: quay.io/rsevilla/debug:latest
+    ports:
+    - containerPort: 80

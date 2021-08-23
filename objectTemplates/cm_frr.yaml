@@ -1,0 +1,956 @@
+piVersion: v1
+data:
+  daemons: |
+    bgpd=no
+    ospfd=no
+    ospf6d=no
+    ripd=no
+    ripngd=no
+    isisd=no
+    pimd=no
+    ldpd=no
+    nhrpd=no
+    eigrpd=no
+    babeld=no
+    sharpd=no
+    pbrd=no
+    bfdd=yes
+    fabricd=no
+    vrrpd=no
+    vtysh_enable=yes
+    zebra_options="  -A 127.0.0.1 -s 90000000"
+    bgpd_options="   -A 127.0.0.1"
+    ospfd_options="  -A 127.0.0.1"
+    ospf6d_options=" -A ::1"
+    ripd_options="   -A 127.0.0.1"
+    ripngd_options=" -A ::1"
+    isisd_options="  -A 127.0.0.1"
+    pimd_options="   -A 127.0.0.1"
+    ldpd_options="   -A 127.0.0.1"
+    nhrpd_options="  -A 127.0.0.1"
+    eigrpd_options=" -A 127.0.0.1"
+    babeld_options=" -A 127.0.0.1"
+    sharpd_options=" -A 127.0.0.1"
+    pbrd_options="   -A 127.0.0.1"
+    staticd_options="-A 127.0.0.1"
+    bfdd_options="   -A 127.0.0.1"
+    fabricd_options="-A 127.0.0.1"
+    vrrpd_options="  -A 127.0.0.1"
+  frr.conf: |
+    password zebra
+    enable password zebra
+    bfd
+     peer 192.168.216.2 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.3 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.4 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.5 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.6 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.7 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.8 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.9 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.10 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.11 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.12 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.13 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.14 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.15 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.16 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.17 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.18 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.19 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.20 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.21 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.22 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.23 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.24 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.25 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.26 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.27 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.28 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.29 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.30 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.31 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.32 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.33 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.34 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.35 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.36 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.37 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.38 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.39 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.40 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.41 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.42 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.43 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    bfd
+     peer 192.168.216.44 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.45 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.46 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.47 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.48 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.49 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.50 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.51 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.52 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.53 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.54 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.55 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.56 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.57 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.58 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.59 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.60 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.61 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.62 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.63 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.64 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.65 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.66 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.67 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.68 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.69 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.70 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.71 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.72 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.73 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.74 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.75 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.76 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.77 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.78 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.79 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.80 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.81 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.82 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.83 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.84 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.85 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.86 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.87 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.88 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.89 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.90 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.91 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.92 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.93 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.94 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.95 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.96 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.97 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.98 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.99 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.100 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.101 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.102 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.103 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.104 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.105 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.106 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.107 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.108 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.109 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.110 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.111 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.112 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.113 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.114 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.115 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.116 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.117 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.117 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.118 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    bfd
+     peer 192.168.216.119 interface net1
+       no shutdown
+       debug bfd network
+       debug bfd peer
+       debug bfd zebra
+     !
+    !
+    log file /var/log/frr/frr.log debugging
+kind: ConfigMap
+metadata:
+  name: frr
+

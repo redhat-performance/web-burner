@@ -1,0 +1,83 @@
+---
+ 
+global:
+  writeToFile: true
+  metricsDirectory: collected-metrics
+  measurements:
+    - name: podLatency
+      esIndex: kube-burner
+  indexerConfig:
+    enabled: true
+    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    insecureSkipVerify: true
+    defaultIndex: kube-burner
+    type: elastic
+
+jobs:
+
+{{ range $index, $val := sequence 1 35 }}
+  - name: service-job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: f5-served-ns-{{ $val }}
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/node_density_pod_service_f5.yml
+        replicas: 1
+        inputVars:
+          ns: {{ $val }}
+{{ end }}
+
+{{ range $index, $val := sequence 1 34 }}
+  - name: served-job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: f5-served-ns-{{ $val }}
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/node_density_pod_served_f5.yml
+        replicas: 60
+        inputVars:
+          ns: {{ $val }}
+{{ end }}
+
+  - name: served-job-35
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: f5-served-ns-35
+    podWait: false
+    waitWhenFinished: true
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/node_density_pod_served_f5.yml
+        replicas: 60
+        inputVars:
+          ns: 35

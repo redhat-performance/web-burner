@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-served-{{ .Iteration }}-{{ .Replica }}
+  labels:
+    app: pod-served-{{ .Iteration }}
+    ns: served-ns-{{ .Iteration }} 
+spec:
+  containers:
+  - name: perfapp-1
+    image: quay.io/openshift-scale/nginx
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080
+      periodSeconds: 30
+      failureThreshold: 1
+      timeoutSeconds: 15
+      initialDelaySeconds: 5
+    resources:
+      request:
+        memory: '100Mi'
+        cpu: 100m
+      limit:
+        memory: '100Mi'
+        cpu: 100m          
+    ports:
+    - containerPort: 8080        
+  - args:
+    - sleep
+    - infinity
+    name: app
+    image: k8s.gcr.io/pause:3.1
+    imagePullPolicy: IfNotPresent
+    resources:
+      request:
+        memory: '100Mi'
+        cpu: 100m
+      limit:
+        memory: '100Mi'
+        cpu: 100m    
+      #  nodeSelector:
+      #     kubernetes.io/hostname: worker{{if eq .Iteration 81}}{{printf "%03d" (add .Iteration 2)}}{{else if eq .Iteration 82}}{{printf "%03d" (add .Iteration 1)}}{{else if eq .Iteration 98}}{{printf "%03d" (add .Iteration 2)}}{{else if eq .Iteration 110}}{{printf "%03d" (add .Iteration 2)}}{{else}}{{printf "%03d" (add .Iteration 3)}}{{end}}-r640   
+     
+     

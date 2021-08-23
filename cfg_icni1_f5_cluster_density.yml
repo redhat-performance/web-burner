@@ -1,0 +1,94 @@
+---
+ 
+global:
+  writeToFile: true
+  metricsDirectory: collected-metrics
+  measurements:
+    - name: podLatency
+      esIndex: kube-burner
+  indexerConfig:
+    enabled: true
+    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    insecureSkipVerify: true
+    defaultIndex: kube-burner
+    type: elastic
+
+jobs:
+  # - name: delete-networks-job
+  #  jobType: delete
+  #  namespace: openshift-sriov-network-operator
+  #  objects:
+  #  - kind: SriovNetwork
+  #    labelSelector: {kube-burner-job: create-networks-job}
+
+  # - name: delete-init-pods-job
+  #   jobType: delete
+  #   objects:
+  #   - kind: Pod
+  #     labelSelector: {kube-burner-job: init-job}
+        
+
+{{ range $index, $val := sequence 1 34 }}
+  - name: job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: f5-served-ns-{{ $val }} 
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/cluster_density_configmap.yml
+        replicas: 30
+      - objectTemplate: objectTemplates/cluster_density_secret.yml
+        replicas: 38
+      - objectTemplate: objectTemplates/cluster_density_pod_served_f5.yml
+        replicas: 38
+        inputVars:
+          ns: {{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_f5.yml
+        replicas: 38
+        inputVars:
+          ns: {{ $val }}       
+      - objectTemplate: objectTemplates/cluster_density_dep_served.yml
+        replicas: 5
+{{ end }}
+
+  - name: job-35
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: f5-served-ns-35
+    podWait: false
+    waitWhenFinished: true
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/cluster_density_configmap.yml
+        replicas: 30
+      - objectTemplate: objectTemplates/cluster_density_secret.yml
+        replicas: 38
+      - objectTemplate: objectTemplates/cluster_density_pod_served_f5.yml
+        replicas: 38
+        inputVars:
+          ns: 35
+      - objectTemplate: objectTemplates/cluster_density_pod_service_f5.yml
+        replicas: 38
+        inputVars:
+          ns: 35
+      - objectTemplate: objectTemplates/cluster_density_dep_served.yml
+        replicas: 5
+
