@@ -40,7 +40,7 @@ spec:
     imagePullPolicy: IfNotPresent
     command: ["/bin/sh","-c"]
     args:
-    - sleep 10 && bash /var/tmp/patch_script.sh
+    - sleep 10 && bash /var/tmp/patch_script.sh && sleep infinity
     volumeMounts:
     - name: kubeconfig
       mountPath: /tmp/
