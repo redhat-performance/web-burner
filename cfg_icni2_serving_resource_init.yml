@@ -44,6 +44,8 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/pod.yml
         replicas: 1
+        
+      - objectTemplate: objectTemplates/patch_script_configmap.yml
 
   - name: create-networks-job
     jobType: create
