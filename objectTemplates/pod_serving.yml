@@ -4,6 +4,7 @@ metadata:
   name: pod-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
   namespace: serving-ns
   annotations:
+    gateway-ip: "192.168.{{ add 216 .Replica }}.{{ .Iteration }}"
     k8s.ovn.org/routing-namespaces: served-ns-{{ .Iteration }}
     k8s.ovn.org/routing-network: sriov-net-ens2f0
     k8s.ovn.org/bfd-enabled: "true"
@@ -34,10 +35,32 @@ spec:
     volumeMounts:
     - name: config-volume
       mountPath: /etc/frr
+  - name: patch
+    image: quay.io/mukrishn/jetski:latest
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sh","-c"]
+    args:
+    - sleep 10 && bash /var/tmp/patch_script.sh
+    volumeMounts:
+    - name: kubeconfig
+      mountPath: /tmp/
+    - name: patch-script
+      mountPath: /var/tmp/
+    env:
+    - name: KUBECONFIG
+      value: "/tmp/config"
+    - name: pod_name
+      value: pod-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
   volumes:
     - name: config-volume
       configMap:
         name: frr
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+    - name: patch-script
+      configMap:
+        name: patch-script
   nodeSelector:
     serving: ""
 

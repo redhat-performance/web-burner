@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: patch-script
+  namespace: serving-ns
+data:
+  patch_script.sh: |
+    gw_ip=$(kubectl annotate pod -n serving-ns ${pod_name} --list=true | grep gateway-ip | grep -v applied-configuration | awk -F'=' '{print $2}')
+    route_net=$(kubectl annotate pod -n serving-ns ${pod_name} --list=true | grep k8s.ovn.org/routing-network | grep -v applied-configuration | awk -F'=' '{print $2}')
+    
+    kubectl patch pod/${pod_name} -n serving-ns --type='merge' -p "$(cat <<- EOF
+    metadata:
+      annotations:
+        k8s.v1.cni.cncf.io/network-status: |-
+          [{
+            "name": "${route_net}",
+            "interface": "net1",
+            "ips": [
+                "${gw_ip}"
+             ],
+            "dns": {}
+          }]
+    EOF
+    )"
