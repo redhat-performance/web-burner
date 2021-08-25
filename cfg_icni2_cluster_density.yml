@@ -36,7 +36,7 @@ jobs:
     burst: 20
     namespacedIterations: false
     cleanup: false
-    namespace: f5-served-ns-{{ $val }} 
+    namespace: served-ns-{{ $val }} 
     podWait: false
     waitWhenFinished: false
     waitFor: ["Pod"]
@@ -68,7 +68,7 @@ jobs:
     burst: 20
     namespacedIterations: false
     cleanup: false
-    namespace: f5-served-ns-35
+    namespace: served-ns-35
     podWait: false
     waitWhenFinished: true
     waitFor: ["Pod"]
