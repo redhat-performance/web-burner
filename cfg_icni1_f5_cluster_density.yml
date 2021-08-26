@@ -50,13 +50,21 @@ jobs:
       - objectTemplate: objectTemplates/cluster_density_secret.yml
         replicas: 38
       - objectTemplate: objectTemplates/cluster_density_pod_served_f5.yml
-        replicas: 38
-        inputVars:
-          ns: {{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service_f5.yml
-        replicas: 38
+        replicas: 3
         inputVars:
           ns: {{ $val }}       
+      - objectTemplate: objectTemplates/cluster_density_pod_service_f5.yml
+        replicas: 3
+        inputVars:
+          ns: {{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 70
+        inputVars:
+          ns: {{ $val }}                
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 35
+        inputVars:
+          ns: {{ $val }}            
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 5
 {{ end }}
@@ -82,13 +90,21 @@ jobs:
       - objectTemplate: objectTemplates/cluster_density_secret.yml
         replicas: 38
       - objectTemplate: objectTemplates/cluster_density_pod_served_f5.yml
-        replicas: 38
+        replicas: 3
         inputVars:
-          ns: 35
+          ns: 35        
       - objectTemplate: objectTemplates/cluster_density_pod_service_f5.yml
-        replicas: 38
+        replicas: 3
         inputVars:
           ns: 35
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 70
+        inputVars:
+          ns: 35                
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 35
+        inputVars:
+          ns: 35            
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 5
 
