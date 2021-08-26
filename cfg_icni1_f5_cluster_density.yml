@@ -43,7 +43,7 @@ jobs:
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
-    jobPause: 0s
+    jobPause: 20s
     objects:
       - objectTemplate: objectTemplates/cluster_density_configmap.yml
         replicas: 30
