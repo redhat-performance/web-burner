@@ -58,15 +58,147 @@ jobs:
         inputVars:
           ns: {{ $val }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
-        replicas: 70
+        replicas: 10
         inputVars:
           ns: {{ $val }}                
       - objectTemplate: objectTemplates/cluster_density_pod_service.yml
-        replicas: 35
+        replicas: 10
         inputVars:
-          ns: {{ $val }}            
+          ns: {{ $val }}              
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 5
+{{ end }}
+
+  - name: app-job
+    jobType: create
+    jobIterations: 2
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: app-served-ns 
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 20s
+    jobPause: 20s
+    objects:
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 84
+        inputVars:
+          ns: group-a-1
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-a-1
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 56
+        inputVars:
+          ns: group-b-1
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-b-1
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 25
+        inputVars:
+          ns: group-c-1
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-c-1
+
+{{ range $index, $val := sequence 1 3 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 24
+        inputVars:
+          ns: group-d-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-d-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 14
+        inputVars:
+          ns: group-e-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-e-{{ $val }}                       
+{{ end }}
+
+{{ range $index, $val := sequence 1 6 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 12
+        inputVars:
+          ns: group-f-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-f-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 10
+        inputVars:
+          ns: group-g-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-g-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 9
+        inputVars:
+          ns: group-h-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-h-{{ $val }}                             
+{{ end }}
+
+{{ range $index, $val := sequence 1 12 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 8
+        inputVars:
+          ns: group-i-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-i-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 6
+        inputVars:
+          ns: group-j-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-j-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 5
+        inputVars:
+          ns: group-k-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-k-{{ $val }}                             
+{{ end }}
+
+{{ range $index, $val := sequence 1 29 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 4
+        inputVars:
+          ns: group-l-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+        replicas: 1
+        inputVars:
+          ns: group-l-{{ $val }}                   
 {{ end }}
 
   - name: job-35
@@ -98,13 +230,13 @@ jobs:
         inputVars:
           ns: 35
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
-        replicas: 70
+        replicas: 10
         inputVars:
-          ns: 35                
+          ns: 35
       - objectTemplate: objectTemplates/cluster_density_pod_service.yml
-        replicas: 35
+        replicas: 10
         inputVars:
-          ns: 35            
+          ns: 35                 
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 5
 
