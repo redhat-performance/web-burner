@@ -58,11 +58,11 @@ jobs:
         inputVars:
           ns: {{ $val }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
-        replicas: 10
+        replicas: 20
         inputVars:
           ns: {{ $val }}                
       - objectTemplate: objectTemplates/cluster_density_pod_service.yml
-        replicas: 10
+        replicas: 20
         inputVars:
           ns: {{ $val }}              
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
@@ -230,11 +230,11 @@ jobs:
         inputVars:
           ns: 35
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
-        replicas: 10
+        replicas: 20
         inputVars:
           ns: 35
       - objectTemplate: objectTemplates/cluster_density_pod_service.yml
-        replicas: 10
+        replicas: 20
         inputVars:
           ns: 35                 
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml

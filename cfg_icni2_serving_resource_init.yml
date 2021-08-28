@@ -28,10 +28,10 @@ jobs:
         
   - name: init-job
     jobType: create
-    jobIterations: 1
+    jobIterations: 35
     qps: 20
     burst: 20
-    namespacedIterations: false
+    namespacedIterations: true
     cleanup: false
     namespace: serving-ns
     podWait: false
@@ -50,7 +50,7 @@ jobs:
 
   - name: create-networks-job
     jobType: create
-    jobIterations: 1
+    jobIterations: 35
     qps: 1
     burst: 1
     namespacedIterations: false
@@ -69,10 +69,10 @@ jobs:
 
   - name: create-cms-job
     jobType: create
-    jobIterations: 1
+    jobIterations: 35
     qps: 1
     burst: 1
-    namespacedIterations: false
+    namespacedIterations: true
     cleanup: false
     namespace: serving-ns
     podWait: false
@@ -110,7 +110,7 @@ jobs:
     jobIterations: 35
     qps: 20
     burst: 20
-    namespacedIterations: false
+    namespacedIterations: true
     cleanup: false
     namespace: serving-ns
     podWait: false

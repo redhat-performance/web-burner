@@ -11,5 +11,5 @@ spec:
   spoofChk: "off"
   trust: "on"
   resourceName: intelnics2
-  networkNamespace: serving-ns
+  networkNamespace: serving-ns-{{ .Iteration }}
 
