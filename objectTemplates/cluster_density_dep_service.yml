@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dep-served-ns-{{ .Replica }}
+  labels:
+    app: dep-served-{{ .Iteration }}-{{ .Replica }}
+spec:
+  ports:
+  - name: dep-served-ns-{{ .Replica }}
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: dep-served-{{ .Iteration }}-{{ .Replica }}
