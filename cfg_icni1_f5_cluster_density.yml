@@ -28,7 +28,7 @@ jobs:
   #     labelSelector: {kube-burner-job: init-job}
         
 
-{{ range $index, $val := sequence 1 34 }}
+{{ range $index, $val := sequence 1 35 }}
   - name: job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -129,6 +129,7 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    objects:
 {{ range $index, $val := sequence 1 3 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 24
@@ -164,6 +165,7 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    objects:
 {{ range $index, $val := sequence 1 6 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 12
@@ -208,6 +210,7 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    objects:
 {{ range $index, $val := sequence 1 12 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 8
@@ -246,12 +249,13 @@ jobs:
     cleanup: false
     namespace: app-served-ns 
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 20s
-    jobPause: 20s
+    jobPause: 0s
+    objects:
 {{ range $index, $val := sequence 1 29 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 4
@@ -262,44 +266,3 @@ jobs:
         inputVars:
           ns: group-l-{{ $val }}                   
 {{ end }}
-
-  - name: job-35
-    jobType: create
-    jobIterations: 1
-    qps: 20
-    burst: 20
-    namespacedIterations: false
-    cleanup: false
-    namespace: f5-served-ns-35
-    podWait: false
-    waitWhenFinished: true
-    waitFor: ["Pod"]
-    verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
-    objects:
-      - objectTemplate: objectTemplates/cluster_density_configmap.yml
-        replicas: 30
-      - objectTemplate: objectTemplates/cluster_density_secret.yml
-        replicas: 38
-      - objectTemplate: objectTemplates/cluster_density_pod_served_f5.yml
-        replicas: 3
-        inputVars:
-          ns: 35        
-      - objectTemplate: objectTemplates/cluster_density_pod_service_f5.yml
-        replicas: 3
-        inputVars:
-          ns: 35
-      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
-        replicas: 25
-        inputVars:
-          ns: 35
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
-        replicas: 25
-        inputVars:
-          ns: 35                 
-      - objectTemplate: objectTemplates/cluster_density_dep_served.yml
-        replicas: 5
-      - objectTemplate: objectTemplates/cluster_density_dep_service.yml
-        replicas: 5
