@@ -91,7 +91,7 @@ jobs:
         replicas: 84
         inputVars:
           ns: group-a-1
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-a-1
@@ -100,7 +100,7 @@ jobs:
         replicas: 56
         inputVars:
           ns: group-b-1
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-b-1
@@ -109,7 +109,7 @@ jobs:
         replicas: 25
         inputVars:
           ns: group-c-1
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-c-1
@@ -135,7 +135,7 @@ jobs:
         replicas: 24
         inputVars:
           ns: group-d-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-d-{{ $val }}
@@ -144,7 +144,7 @@ jobs:
         replicas: 14
         inputVars:
           ns: group-e-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-e-{{ $val }}                       
@@ -171,7 +171,7 @@ jobs:
         replicas: 12
         inputVars:
           ns: group-f-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-f-{{ $val }}
@@ -180,7 +180,7 @@ jobs:
         replicas: 10
         inputVars:
           ns: group-g-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-g-{{ $val }}
@@ -189,7 +189,7 @@ jobs:
         replicas: 9
         inputVars:
           ns: group-h-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-h-{{ $val }}                             
@@ -216,7 +216,7 @@ jobs:
         replicas: 8
         inputVars:
           ns: group-i-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-i-{{ $val }}
@@ -225,7 +225,7 @@ jobs:
         replicas: 6
         inputVars:
           ns: group-j-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-j-{{ $val }}
@@ -234,7 +234,7 @@ jobs:
         replicas: 5
         inputVars:
           ns: group-k-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-k-{{ $val }}                             
@@ -261,7 +261,7 @@ jobs:
         replicas: 4
         inputVars:
           ns: group-l-{{ $val }}
-      - objectTemplate: objectTemplates/cluster_density_pod_service.yml
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
           ns: group-l-{{ $val }}                   
