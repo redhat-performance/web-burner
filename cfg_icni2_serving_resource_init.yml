@@ -122,5 +122,5 @@ jobs:
     jobPause: 1s
     objects:
       - objectTemplate: objectTemplates/pod_serving.yml
-        replicas: 4
+        replicas: 3
 
