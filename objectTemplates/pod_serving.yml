@@ -2,17 +2,18 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: pod-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+  namespace: serving-ns-{{ .Iteration }}
   annotations:
     gateway-ip: "192.168.{{ add 216 .Replica }}.{{ .Iteration }}"
     k8s.ovn.org/routing-namespaces: served-ns-{{ .Iteration }}
-    k8s.ovn.org/routing-network: sriov-net-ens2f0
+    k8s.ovn.org/routing-network: sriov-net-ens2f0-{{ .Iteration }}
     k8s.ovn.org/bfd-enabled: "true"
     #k8s.v1.cni.cncf.io/networks: sriov-net-ens2f1-1
     k8s.v1.cni.cncf.io/networks: |-
-      [{ "name": "sriov-net-ens2f0", "ips": [ "192.168.{{ add 216 .Replica }}.{{ .Iteration }}/21" ]}]
+      [{ "name": "sriov-net-ens2f0-{{ .Iteration }}", "ips": [ "192.168.{{ add 216 .Replica }}.{{ .Iteration }}/21" ]}]
     k8s.v1.cni.cncf.io/network-status: |-
       [{
-          "name": "sriov-net-ens2f0",
+          "name": "sriov-net-ens2f0-{{ .Iteration }}",
           "interface": "net1",
           "ips" : [
               "192.168.{{ add 216 .Replica }}.{{ .Iteration }}"
