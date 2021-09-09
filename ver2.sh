@@ -1,4 +1,4 @@
-POD=ovnkube-master-cwnpl
+POD=ovnkube-master-mvs24
 set -x
 oc exec -n openshift-ovn-kubernetes -it $POD -- ovn-nbctl lr-route-list GR_worker000-r640 | wc -l
 oc exec -n openshift-ovn-kubernetes -it $POD -- ovn-nbctl lr-route-list GR_worker001-r640 | wc -l
