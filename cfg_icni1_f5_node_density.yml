@@ -14,9 +14,50 @@ global:
     type: elastic
 
 jobs:
+{{ range $index, $val := sequence 1 33 }}
+  - name: service-job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: normal-ns-{{ $val }}
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/node_density_pod_service_normal.yml
+        replicas: 1
+{{ end }}
+
+{{ range $index, $val := sequence 1 33}}
+  - name: normal-job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: normal-ns-{{ $val }}
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: true
+    jobIterationDelay: 0s
+    jobPause: 20s
+    objects:
+      - objectTemplate: objectTemplates/node_density_pod_served_normal.yml
+        replicas: 60
+{{ end }}
 
 {{ range $index, $val := sequence 1 35 }}
-  - name: service-job-{{ $val }}
+  - name: service-job-2-{{ $val }}
     jobType: create
     jobIterations: 1
     qps: 20
@@ -53,10 +94,10 @@ jobs:
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
-    jobPause: 20s
+    jobPause: 5s
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served_f5.yml
-        replicas: 60
+        replicas: 3
         inputVars:
           ns: {{ $val }}
 {{ end }}
@@ -78,6 +119,6 @@ jobs:
     jobPause: 0s
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served_f5.yml
-        replicas: 60
+        replicas: 3
         inputVars:
           ns: 35
