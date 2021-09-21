@@ -13,19 +13,7 @@ global:
     type: elastic
 
 jobs:
-  # - name: delete-networks-job
-  #  jobType: delete
-  #  namespace: openshift-sriov-network-operator
-  #  objects:
-  #  - kind: SriovNetwork
-  #    labelSelector: {kube-burner-job: create-networks-job}
-
-  # - name: delete-init-pods-job
-  #   jobType: delete
-  #   objects:
-  #   - kind: Pod
-  #     labelSelector: {kube-burner-job: init-job}
-        
+       
   - name: init-job
     jobType: create
     jobIterations: 35
@@ -42,8 +30,6 @@ jobs:
     jobIterationDelay: 0s
     jobPause: 1s
     objects:
-      - objectTemplate: objectTemplates/pod.yml
-        replicas: 1
 
       - objectTemplate: objectTemplates/patch_script_configmap.yml
         replicas: 1
