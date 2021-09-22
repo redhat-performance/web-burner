@@ -24,5 +24,5 @@ jobs:
       - kind: Service
         labelSelector: {kube-burner-uuid: ${1}}
 EOF
-kube-burner init -c cfg_del.yml
+kube-burner init -c cfg_del.yml --uuid $(uuidgen)
 
