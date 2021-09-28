@@ -1,0 +1,126 @@
+---
+global:
+  writeToFile: true
+  metricsDirectory: collected-metrics
+  measurements:
+    - name: podLatency
+      esIndex: kube-burner
+  indexerConfig:
+    enabled: true
+    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    insecureSkipVerify: true
+    defaultIndex: kube-burner
+    type: elastic
+
+jobs:
+  # - name: delete-networks-job
+  #  jobType: delete
+  #  namespace: openshift-sriov-network-operator
+  #  objects:
+  #  - kind: SriovNetwork
+  #    labelSelector: {kube-burner-job: create-networks-job}
+
+  # - name: delete-init-pods-job
+  #   jobType: delete
+  #   objects:
+  #   - kind: Pod
+  #     labelSelector: {kube-burner-job: init-job}
+        
+  - name: init-job
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: serving-ns
+    podWait: false
+    waitWhenFinished: true
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: true
+    jobIterationDelay: 0s
+    jobPause: 1s
+    objects:
+      - objectTemplate: objectTemplates/pod.yml
+        replicas: 1
+
+      - objectTemplate: objectTemplates/patch_script_configmap.yml
+        replicas: 1
+
+  - name: create-networks-job
+    jobType: create
+    jobIterations: 1
+    qps: 1
+    burst: 1
+    namespacedIterations: false
+    cleanup: false
+    namespace: openshift-sriov-network-operator
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["net-attach-def"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 1s
+    jobPause: 2s
+    objects:
+      - objectTemplate: objectTemplates/sriov_network.yml
+        replicas: 1
+
+  - name: create-cms-job
+    jobType: create
+    jobIterations: 1
+    qps: 1
+    burst: 1
+    namespacedIterations: true
+    cleanup: false
+    namespace: serving-ns
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["configMap"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 1s
+    jobPause: 2s
+    objects:
+      - objectTemplate: objectTemplates/cm_frr.yaml
+        replicas: 1
+
+  - name: init-served-job
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: served-ns
+    podWait: false
+    waitWhenFinished: true
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: true
+    jobIterationDelay: 0s
+    jobPause: 1s
+    objects:
+      - objectTemplate: objectTemplates/pod_served.yml
+        replicas: 1
+
+  - name: serving-job
+    jobType: create
+    jobIterations: 35
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: serving-ns-1
+    podWait: false
+    waitWhenFinished: true
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: true
+    jobIterationDelay: 0s
+    jobPause: 1s
+    objects:
+      - objectTemplate: objectTemplates/pod_serving.yml
+        replicas: 4
+
