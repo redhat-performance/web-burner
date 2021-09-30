@@ -1,0 +1,280 @@
+---
+ 
+global:
+  writeToFile: true
+  metricsDirectory: collected-metrics
+  measurements:
+    - name: podLatency
+      esIndex: kube-burner
+  indexerConfig:
+    enabled: true
+    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    insecureSkipVerify: true
+    defaultIndex: kube-burner
+    type: elastic
+
+jobs:
+  # - name: delete-networks-job
+  #  jobType: delete
+  #  namespace: openshift-sriov-network-operator
+  #  objects:
+  #  - kind: SriovNetwork
+  #    labelSelector: {kube-burner-job: create-networks-job}
+
+  # - name: delete-init-pods-job
+  #   jobType: delete
+  #   objects:
+  #   - kind: Pod
+  #     labelSelector: {kube-burner-job: init-job}
+        
+
+{{ range $index, $val := sequence 1 35 }}
+  - name: job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: normal-ns-{{ $val }} 
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 20s
+    jobPause: 20s
+    objects:
+      - objectTemplate: objectTemplates/cluster_density_configmap.yml
+        replicas: 30
+      - objectTemplate: objectTemplates/cluster_density_secret.yml
+        replicas: 38
+      - objectTemplate: objectTemplates/node_density_pod_served_normal.yml
+        replicas: 38
+        inputVars:
+          ns: {{ $val }}
+      - objectTemplate: objectTemplates/node_density_pod_service_normal.yml
+        replicas: 38
+        inputVars:
+          ns: {{ $val }}       
+      - objectTemplate: objectTemplates/cluster_density_dep_served.yml
+        replicas: 5
+{{ end }}
+
+{{ range $index, $val := sequence 1 35 }}
+  - name: served-job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: served-ns-1
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 10s
+    objects:
+      - objectTemplate: objectTemplates/node_density_pod_served.yml
+        replicas: 3
+{{ end }}
+
+  - name: app-job-1
+    jobType: create
+    jobIterations: 2
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: app-served-ns
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 20s
+    jobPause: 20s
+    objects:
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 84
+        inputVars:
+          ns: group-a-1
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-a-1
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 56
+        inputVars:
+          ns: group-b-1
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-b-1
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 25
+        inputVars:
+          ns: group-c-1
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-c-1
+
+  - name: app-job-2
+    jobType: create
+    jobIterations: 2
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: app-served-ns
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 20s
+    jobPause: 20s
+    objects:
+{{ range $index, $val := sequence 1 3 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 24
+        inputVars:
+          ns: group-d-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-d-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 14
+        inputVars:
+          ns: group-e-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-e-{{ $val }}
+{{ end }}
+
+  - name: app-job-3
+    jobType: create
+    jobIterations: 2
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: app-served-ns
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 20s
+    jobPause: 20s
+    objects:
+{{ range $index, $val := sequence 1 6 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 12
+        inputVars:
+          ns: group-f-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-f-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 10
+        inputVars:
+          ns: group-g-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-g-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 9
+        inputVars:
+          ns: group-h-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-h-{{ $val }}
+{{ end }}
+
+  - name: app-job-4
+    jobType: create
+    jobIterations: 2
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: app-served-ns
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 20s
+    jobPause: 20s
+    objects:
+{{ range $index, $val := sequence 1 12 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 8
+        inputVars:
+          ns: group-i-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-i-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 6
+        inputVars:
+          ns: group-j-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-j-{{ $val }}
+
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 5
+        inputVars:
+          ns: group-k-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-k-{{ $val }}
+{{ end }}
+
+  - name: app-job-5
+    jobType: create
+    jobIterations: 2
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: app-served-ns
+    podWait: false
+    waitWhenFinished: true
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 20s
+    jobPause: 0s
+    objects:
+{{ range $index, $val := sequence 1 29 }}
+      - objectTemplate: objectTemplates/cluster_density_pod_served.yml
+        replicas: 4
+        inputVars:
+          ns: group-l-{{ $val }}
+      - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
+        replicas: 1
+        inputVars:
+          ns: group-l-{{ $val }}
+{{ end }}
+
