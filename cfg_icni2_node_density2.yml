@@ -15,7 +15,7 @@ global:
 
 jobs:
 {{ range $index, $val := sequence 1 35 }}
-  - name: service-job-{{ $val }}
+  - name: normal-service-job-{{ $val }}
     jobType: create
     jobIterations: 1
     qps: 20
@@ -54,6 +54,27 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served_normal.yml
         replicas: 60
+{{ end }}
+
+{{ range $index, $val := sequence 1 35 }}
+  - name: served-service-job-{{ $val }}
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: served-ns-{{ $val }}
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["Pod"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 0s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/node_density_pod_service_served.yml
+        replicas: 1
 {{ end }}
 
 {{ range $index, $val := sequence 1 34 }}
