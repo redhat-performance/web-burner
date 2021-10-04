@@ -49,11 +49,11 @@ jobs:
         replicas: 30
       - objectTemplate: objectTemplates/cluster_density_secret.yml
         replicas: 38
-      - objectTemplate: objectTemplates/node_density_pod_served_normal.yml
+      - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 38
         inputVars:
           ns: {{ $val }}
-      - objectTemplate: objectTemplates/node_density_pod_service_normal.yml
+      - objectTemplate: objectTemplates/node_density_pod_service_served.yml
         replicas: 38
         inputVars:
           ns: {{ $val }}       
