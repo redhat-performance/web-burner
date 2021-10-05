@@ -32,7 +32,7 @@ Kube-burner configs are templated to created vz equivalent workload on 120 node 
 	└── 35 normal-ns
 		└── 1 service with 60 normal pod endpoints on each namespace
 ├── cfg_icni2_cluster_density2_single.yml
-	├── 35 normal-ns
+	├── 20 normal-ns
 		└── 30 configmaps, 38 secrets, 38 normal pods and services, 5 deployments with 2 replica pods on each namespace
 	├── 1 served-ns
 		└── 105 icni2.0 app pods 
@@ -43,7 +43,7 @@ Kube-burner configs are templated to created vz equivalent workload on 120 node 
 		├── 12 service(15 ports each) with 8 pod endpoints, 12 service(15 ports each) with 6 pod endpoints, 12 service(15 ports each) with 5 pod endpoints
 		└── 29 service(15 ports each) with 4 pod endpoints, 29 service(15 ports each) with 6 pod endpoints		
 ├── cfg_icni2_cluster_density2.yml
-	├── 35 normal-ns
+	├── 20 normal-ns
 		└── 30 configmaps, 38 secrets, 38 normal pods and services, 5 deployments with 2 replica pods on each namespace
 	├── 35 served-ns
 		└── 3 icni2.0 app pods on each namespace
