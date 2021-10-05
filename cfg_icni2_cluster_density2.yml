@@ -28,7 +28,7 @@ jobs:
   #     labelSelector: {kube-burner-job: init-job}
         
 
-{{ range $index, $val := sequence 1 35 }}
+{{ range $index, $val := sequence 1 20 }}
   - name: job-{{ $val }}
     jobType: create
     jobIterations: 1
