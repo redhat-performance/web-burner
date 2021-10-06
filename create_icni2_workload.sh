@@ -7,7 +7,7 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-cd ./workload
+pushd ./workload
 
 lb_workers=$(oc get nodes | grep worker-lb | awk '{print $1}') # get all worker-lb nodes
 lb_workers=($lb_workers)
@@ -52,9 +52,6 @@ do
   echo "Nice! $mcp is updated"
 done
 
-echo "Creating SRIOVNetwork resource.."
-oc apply -f sriov_network.yml
-
 echo "Set Openshift monitoring vars.."
 prometheus_url=$(oc get routes -n openshift-monitoring prometheus-k8s --no-headers | awk '{print $2}')
 token=$(oc sa get-token -n openshift-monitoring prometheus-k8s)
@@ -66,7 +63,9 @@ kube-burner init -c cfg_icni2_serving_resource_init.yml -t ${token} --uuid 1234
 echo "Pausing for a minute.."
 sleep 60 # sleep for a minute before actual workload
 
-echo "Lets create ICNI2 workloads.."
+popd
+
+echo "Lets create ICNI2 workloads..$uuid"
 kube-burner init -c ${1} -t ${token} --uuid ${uuid} --prometheus-url https://${prometheus_url} -m metrics_full.yaml 
 
 
