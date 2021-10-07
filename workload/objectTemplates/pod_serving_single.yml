@@ -6,10 +6,19 @@ metadata:
   annotations:
     gateway-ip: "192.168.{{ add 217 .Replica }}.{{ .Iteration }}"
     k8s.ovn.org/routing-namespaces: served-ns-1
-    k8s.ovn.org/routing-network: serving-ns-1/sriov-net-{{ .Iteration }}
+    k8s.ovn.org/routing-network: serving-ns-1/sriov-net-1
     k8s.ovn.org/bfd-enabled: "true"
     k8s.v1.cni.cncf.io/networks: |-
       [{ "name": "sriov-net-1", "ips": [ "192.168.{{ add 217 .Replica }}.{{ .Iteration }}/21" ]}]
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+        "name": "serving-ns-1/sriov-net-1",
+        "interface": "net1",
+        "ips": [
+            "192.168.{{ add 217 .Replica }}.{{ .Iteration }}"
+         ],
+        "dns": {}
+      }]
 spec:
   containers:
   - name: bfd
