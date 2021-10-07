@@ -1,7 +1,7 @@
 apiVersion: sriovnetwork.openshift.io/v1
 kind: SriovNetwork
 metadata:
-  name: sriov-net-ens2f0-{{ .Iteration }}
+  name: sriov-net-{{ .Iteration }}
   namespace: openshift-sriov-network-operator
 spec:
   ipam: |

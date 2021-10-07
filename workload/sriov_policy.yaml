@@ -7,7 +7,7 @@ spec:
   deviceType: netdevice
   nicSelector:
     pfNames:
-     - ens2f0
+     - $sriov_nic
   nodeSelector:
     node-role.kubernetes.io/worker-lb: ""
   numVfs: 64

@@ -1,4 +1,7 @@
 #!/bin/bash
+
+export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
+
 if [ $# -eq 0 ]; then
     echo "Pass kube-burner UUID to script"
     exit 1
