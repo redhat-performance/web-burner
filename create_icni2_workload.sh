@@ -56,6 +56,10 @@ echo "Set Openshift monitoring vars.."
 prometheus_url=$(oc get routes -n openshift-monitoring prometheus-k8s --no-headers | awk '{print $2}')
 token=$(oc sa get-token -n openshift-monitoring prometheus-k8s)
 
+for i in {1..35}; do oc new-project serving-ns-$i; done
+
+for i in {1..35}; do oc create secret -n serving-ns-$i generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig; done
+
 echo "Lets create SPK pods.."
 kube-burner init -c cfg_icni2_serving_resource_init.yml -t ${token} --uuid 1234
 
