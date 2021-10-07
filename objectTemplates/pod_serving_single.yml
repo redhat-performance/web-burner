@@ -12,12 +12,12 @@ metadata:
       [{ "name": "sriov-net-1", "ips": [ "192.168.{{ add 217 .Replica }}.{{ .Iteration }}/21" ]}]
     k8s.v1.cni.cncf.io/network-status: |-
       [{
-        "name": "serving-ns-1/sriov-net-1",
-        "interface": "net1",
-        "ips": [
-            "192.168.{{ add 217 .Replica }}.{{ .Iteration }}"
-         ],
-        "dns": {}
+          "name": "serving-ns-1/sriov-net-1",
+          "interface": "net1",
+          "ips": [
+              "192.168.{{ add 217 .Replica }}.{{ .Iteration }}"
+            ],
+          "dns": {}
       }]
 spec:
   containers:
@@ -33,8 +33,31 @@ spec:
     volumeMounts:
     - name: config-volume
       mountPath: /etc/frr
+  - name: patch
+    image: quay.io/mukrishn/jetski:latest
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sh","-c"]
+    args:
+    - sleep 10 && bash /var/tmp/patch_script.sh && sleep infinity
+    volumeMounts:
+    - name: kubeconfig
+      mountPath: /tmp/
+    - name: patch-script
+      mountPath: /var/tmp/
+    env:
+    - name: KUBECONFIG
+      value: "/tmp/config"
+    - name: pod_name
+      value: pod-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
   volumes:
     - name: config-volume
       configMap:
         name: frr
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+    - name: patch-script
+      configMap:
+        name: patch-script
+
 
