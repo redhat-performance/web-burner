@@ -7,12 +7,6 @@ fi
 export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
-while getopts w:s: flag
-do
-    case "${flag}" in
-        t) TEMPLATE=${OPTARG};;
-    esac
-done
 
 export SCALE=${SCALE:-1}
 
@@ -91,6 +85,6 @@ sleep 60 # sleep for a minute before actual workload
 
 
 echo "Lets create ICNI2 workloads..$uuid"
-kube-burner init -c ${TEMPLATE} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m metrics_full.yaml 
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m metrics_full.yaml 
 
 
