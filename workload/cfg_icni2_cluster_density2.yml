@@ -14,26 +14,13 @@ global:
     type: elastic
 
 jobs:
-  # - name: delete-networks-job
-  #  jobType: delete
-  #  namespace: openshift-sriov-network-operator
-  #  objects:
-  #  - kind: SriovNetwork
-  #    labelSelector: {kube-burner-job: create-networks-job}
-
-  # - name: delete-init-pods-job
-  #   jobType: delete
-  #   objects:
-  #   - kind: Pod
-  #     labelSelector: {kube-burner-job: init-job}
-        
-
-{{ range $index, $val := sequence 1 20 }}
+{{ $normalLimit := multiply 20 .SCALE }}
+{{ range $index, $val := sequence 1 $normalLimit }}
   - name: job-{{ $val }}
     jobType: create
     jobIterations: 1
-    qps: 20
-    burst: 20
+    qps: {{ $.QPS }}
+    burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
     namespace: normal-ns-{{ $val }} 
@@ -57,12 +44,13 @@ jobs:
         replicas: 5
 {{ end }}
 
-{{ range $index, $val := sequence 1 35 }}
+{{ $servedLimit := multiply 35 .SCALE }}
+{{ range $index, $val := sequence 1 $servedLimit }}
   - name: served-job-{{ $val }}
     jobType: create
     jobIterations: 1
-    qps: 20
-    burst: 20
+    qps: {{ $.QPS }}
+    burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
     namespace: served-ns-{{ $val }}
@@ -80,9 +68,9 @@ jobs:
 
   - name: app-job-1
     jobType: create
-    jobIterations: 2
-    qps: 20
-    burst: 20
+    jobIterations: {{ multiply 2 .SCALE }}
+    qps: {{ .QPS }}
+    burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
     namespace: app-served-ns
@@ -123,9 +111,9 @@ jobs:
 
   - name: app-job-2
     jobType: create
-    jobIterations: 2
-    qps: 20
-    burst: 20
+    jobIterations: {{ multiply 2 .SCALE }}
+    qps: {{ .QPS }}
+    burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
     namespace: app-served-ns
@@ -159,9 +147,9 @@ jobs:
 
   - name: app-job-3
     jobType: create
-    jobIterations: 2
-    qps: 20
-    burst: 20
+    jobIterations: {{ multiply 2 .SCALE }}
+    qps: {{ .QPS }}
+    burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
     namespace: app-served-ns
@@ -204,9 +192,9 @@ jobs:
 
   - name: app-job-4
     jobType: create
-    jobIterations: 2
-    qps: 20
-    burst: 20
+    jobIterations: {{ multiply 2 .SCALE }}
+    qps: {{ .QPS }}
+    burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
     namespace: app-served-ns
@@ -249,9 +237,9 @@ jobs:
 
   - name: app-job-5
     jobType: create
-    jobIterations: 2
-    qps: 20
-    burst: 20
+    jobIterations: {{ multiply 2 .SCALE }}
+    qps: {{ .QPS }}
+    burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
     namespace: app-served-ns

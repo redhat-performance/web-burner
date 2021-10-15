@@ -14,12 +14,13 @@ global:
     type: elastic
 
 jobs:
-{{ range $index, $val := sequence 1 35 }}
+{{ $normalLimit := multiply 35 .SCALE }}
+{{ range $index, $val := sequence 1 $normalLimit }}
   - name: normal-service-job-{{ $val }}
     jobType: create
     jobIterations: 1
-    qps: 20
-    burst: 20
+    qps: {{ $.QPS }}
+    burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
     namespace: normal-ns-{{ $val }}
@@ -35,12 +36,12 @@ jobs:
         replicas: 1
 {{ end }}
 
-{{ range $index, $val := sequence 1 35}}
+{{ range $index, $val := sequence 1 $normalLimit}}
   - name: normal-job-{{ $val }}
     jobType: create
     jobIterations: 1
-    qps: 20
-    burst: 20
+    qps:  {{ $.QPS }}
+    burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
     namespace: normal-ns-{{ $val }}
@@ -56,12 +57,13 @@ jobs:
         replicas: 60
 {{ end }}
 
-{{ range $index, $val := sequence 1 35 }}
+{{ $servedLimit := multiply 35 .SCALE }}
+{{ range $index, $val := sequence 1 $servedLimit }}
   - name: served-service-job-{{ $val }}
     jobType: create
     jobIterations: 1
-    qps: 20
-    burst: 20
+    qps: {{ $.QPS }}
+    burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
     namespace: served-ns-{{ $val }}
@@ -77,12 +79,13 @@ jobs:
         replicas: 1
 {{ end }}
 
-{{ range $index, $val := sequence 1 34 }}
+{{ $lastLimit := add $servedLimit -1 }}
+{{ range $index, $val := sequence 1 $lastLimit }}
   - name: served-job-{{ $val }}
     jobType: create
     jobIterations: 1
-    qps: 20
-    burst: 20
+    qps: {{ $.QPS }}
+    burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
     namespace: served-ns-{{ $val }}
@@ -98,14 +101,15 @@ jobs:
         replicas: 3
 {{ end }}
 
-  - name: served-job-35
+
+  - name: served-job-{{ $servedLimit }}
     jobType: create
     jobIterations: 1
-    qps: 20
-    burst: 20
+    qps: {{ .QPS }}
+    burst: {{ .BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: served-ns-35
+    namespace: served-ns-{{ $servedLimit }}
     podWait: false
     waitWhenFinished: true
     waitFor: ["Pod"]

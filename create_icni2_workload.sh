@@ -1,5 +1,30 @@
 #!/bin/bash
 
+if [ $# -eq 0 ]; then
+    echo "Pass options"
+    exit 1
+fi
+export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14}
+export QPS=${QPS:-20}
+export BURST=${BURST:-20}
+while getopts w:s: flag
+do
+    case "${flag}" in
+        w) WORKLOAD=${OPTARG};;
+    esac
+done
+
+export SCALE=${SCALE:-1}
+
+kube_burner_exists=$(which kube-burner)
+
+if [ $? -ne 0 ]; then
+    echo "Installing kube-burner"
+    wget -O kube-burner.tar.gz https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz
+    sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
+fi
+
+
 export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
 
 if [ $# -eq 0 ]; then
@@ -66,6 +91,6 @@ sleep 60 # sleep for a minute before actual workload
 
 
 echo "Lets create ICNI2 workloads..$uuid"
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m metrics_full.yaml 
+kube-burner init -c ${WORKLOAD} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m metrics_full.yaml 
 
 
