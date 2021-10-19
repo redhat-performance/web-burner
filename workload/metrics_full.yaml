@@ -1,6 +1,6 @@
 # API server
 
-metrics:
+# metrics:    # Not needed since kube-version >= 0.12
 
 - query: histogram_quantile(0.99, sum(rate(apiserver_request_duration_seconds_bucket{apiserver="kube-apiserver", verb!~"WATCH", subresource!="log"}[2m])) by (verb,resource,subresource,instance,le)) > 0
   metricName: API99thLatency
