@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14}
+export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14.1}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
