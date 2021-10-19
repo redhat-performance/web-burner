@@ -16,7 +16,7 @@ jobs:
        
   - name: init-job
     jobType: create
-    jobIterations: 35
+    jobIterations: {{ multiply 35 .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -36,7 +36,7 @@ jobs:
 
   - name: create-networks-job
     jobType: create
-    jobIterations: 35
+    jobIterations: {{ multiply 35 .SCALE }}
     qps: 1
     burst: 1
     namespacedIterations: false
@@ -55,7 +55,7 @@ jobs:
 
   - name: create-cms-job
     jobType: create
-    jobIterations: 35
+    jobIterations: {{ multiply 35 .SCALE }}
     qps: 1
     burst: 1
     namespacedIterations: true
@@ -74,7 +74,7 @@ jobs:
 
   - name: init-served-job
     jobType: create
-    jobIterations: 35
+    jobIterations: {{ multiply 35 .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -93,7 +93,7 @@ jobs:
 
   - name: serving-job
     jobType: create
-    jobIterations: 35
+    jobIterations: {{ multiply 35 .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
