@@ -1,9 +1,5 @@
 #!/bin/bash
 
-if [ $# -eq 0 ]; then
-    echo "Pass options"
-    exit 1
-fi
 export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
@@ -84,6 +80,6 @@ sleep 60 # sleep for a minute before actual workload
 
 
 echo "Lets create ICNI2 workloads..$uuid"
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m metrics_full.yaml 
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yaml 
 
 
