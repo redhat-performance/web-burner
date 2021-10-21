@@ -5,6 +5,13 @@ export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
 
+export vf_serving_factor=140
+num_vfs=$(( SCALE*vf_serving_factor))
+lb_count=$(((num_vfs+63)/64)) #round up
+if [[ $lb_count -lt 4 ]] ; then # minimum 4 lb nodes
+    lb_count=4
+fi
+
 kube_burner_exists=$(which kube-burner)
 
 if [ $? -ne 0 ]; then
@@ -26,14 +33,18 @@ pushd ./workload
 lb_workers=$(oc get nodes | grep worker-lb | awk '{print $1}') # get all worker-lb nodes
 lb_workers=($lb_workers)
 # Need at least 4 worker-lb nodes for spk pods
-if [[ ${#lb_workers[@]} -ge 4 ]] ; then
-  echo "Found 4 worker-lb nodes for spk pods"
+if [[ ${#lb_workers[@]} -ge $lb_count ]] ; then
+  echo "Found enough worker-lb nodes for spk pods"
 else
   echo "Not enough worker-lb nodes, labeling nodes"
   all_workers=$(oc get nodes | grep worker | grep -v worker-lb | awk '{print $1}') # get all worker nodes except worker-lb
   all_workers=($all_workers)
+  if [[ $lb_count-${#lb_workers[@]} -gt ${#all_workers[@]} ]]; then
+      echo "Not enough nodes to label" # there should be enough unlabelled nodes to label them
+      exit 1
+  fi
   count=0 
-  while [[ $count -le 3 ]]; do
+  while [[ $count -le $lb_count-1 ]]; do
     echo "Label worker nodes.."
     oc label node ${all_workers[$count]} node-role.kubernetes.io/worker-lb="" --overwrite=true
     count=$((count+1))
