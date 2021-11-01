@@ -10,8 +10,9 @@
 	* Create 64 VFs on worker-lb nodes(4) using `sriov_policy.yaml` with correct PF
 	* lable worker-lb nodes `oc label node worker002-fc640 serving=""` 
 	* create `serving-ns` namespace and create a secret kubeconfig - `for i in {1..35}; do oc create secret -n serving-ns-$i generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig; done`
-	* Run kubeburner config `cfg_icni2_serving_resource_init.yml` to create ICNI2.0 serving pods and BFD sessions
 	* Run workload
+		* `./create_icni2_workload.sh <workload> [scale_factor] [bfd_enabled]`
+		* Example: `./create_icni2_workload.sh workload/cfg_icni2_cluster_density2.yml 4 false`
 
 ## End Resources
 Kube-burner configs are templated to created vz equivalent workload on 120 node cluster.
