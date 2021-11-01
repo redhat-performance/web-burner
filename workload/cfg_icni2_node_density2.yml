@@ -25,7 +25,7 @@ jobs:
     cleanup: false
     namespace: normal-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
@@ -46,7 +46,7 @@ jobs:
     cleanup: false
     namespace: normal-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: true
@@ -68,7 +68,7 @@ jobs:
     cleanup: false
     namespace: served-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
@@ -90,7 +90,7 @@ jobs:
     cleanup: false
     namespace: served-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
