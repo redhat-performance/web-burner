@@ -51,7 +51,7 @@ jobs:
     verifyObjects: true
     errorOnVerify: true
     jobIterationDelay: 0s
-    jobPause: 20s
+    jobPause: 0s
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 60
@@ -95,7 +95,7 @@ jobs:
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
-    jobPause: 5s
+    jobPause: 0s
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 3
