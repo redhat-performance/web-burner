@@ -1,11 +1,13 @@
 #!/bin/bash
 
 SCALE=$2
+BFD=$3
 
 export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14.1}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
+export BFD=${BFD:-true}
 
 export vf_serving_factor=140
 num_vfs=$(( SCALE*vf_serving_factor))
