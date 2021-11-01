@@ -1,4 +1,4 @@
-# kube-burner-templates
+# web-burner
 
 * Install a healthy cluster
 * Run webfuse with bigip and create 35 test namespace using ICNI1.0
