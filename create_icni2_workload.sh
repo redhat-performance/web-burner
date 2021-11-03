@@ -26,6 +26,7 @@ fi
 
 
 export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
+oc create secret generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yaml
 
 if [ $# -eq 0 ]; then
     echo "Pass kube-burner config"
