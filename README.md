@@ -2,14 +2,10 @@
 
 * Install a healthy cluster
 * Run webfuse with bigip and create 35 test namespace using ICNI1.0
-* Install kube-burner v0.11 
 * ICNI1.0
 	* Run kubeburner using node density and cluster density config
 		* `kube-burner init -c cfg_icni2_cluster_density.yml -t $(oc sa get-token -n openshift-monitoring prometheus-k8s) --uuid $(uuidgen) --prometheus-url  https://prometheus-k8s-openshift-monitoring.apps.test82.myocp4.com  -m metrics_full.yaml`
 * ICNI2.0
-	* Create 64 VFs on worker-lb nodes(4) using `sriov_policy.yaml` with correct PF
-	* lable worker-lb nodes `oc label node worker002-fc640 serving=""` 
-	* create `serving-ns` namespace and create a secret kubeconfig - `for i in {1..35}; do oc create secret -n serving-ns-$i generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig; done`
 	* Run workload
 		* `./create_icni2_workload.sh <workload> [scale_factor] [bfd_enabled]`
 		* Example: `./create_icni2_workload.sh workload/cfg_icni2_cluster_density2.yml 4 false`
