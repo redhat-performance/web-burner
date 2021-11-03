@@ -75,7 +75,7 @@ jobs:
   - name: create-secrets-job
     jobType: create
     jobIterations: {{ multiply 35 .SCALE }}
-    qps: 1
+    qps: 20
     burst: 1
     namespacedIterations: true
     cleanup: false
@@ -85,8 +85,8 @@ jobs:
     waitFor: ["Secret"]
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 1s
-    jobPause: 2s
+    jobIterationDelay: 0s
+    jobPause: 0s
     objects:
       - objectTemplate: objectTemplates/secret_kubeconfig.yaml
         replicas: 1
