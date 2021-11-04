@@ -126,6 +126,6 @@ jobs:
     jobIterationDelay: 0s
     jobPause: 1s
     objects:
-      - objectTemplate: {{if .BFD}} objectTemplates/pod_serving.yml {{else}} objectTemplates/pod_serving_no_bfd.yml {{end}}
+      - objectTemplate: {{ if eq .BFD "false" }} objectTemplates/pod_serving.yml {{ else }} objectTemplates/pod_serving_no_bfd.yml {{ end }}
         replicas: 4
 
