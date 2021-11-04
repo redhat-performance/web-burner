@@ -38,7 +38,7 @@ jobs:
         replicas: 38
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 38
-      - objectTemplate: objectTemplates/node_density_pod_service_served.yml
+      - objectTemplate: objectTemplates/node_density_pod_service.yml
         replicas: 38
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 5

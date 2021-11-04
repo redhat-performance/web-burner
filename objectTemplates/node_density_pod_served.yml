@@ -5,7 +5,7 @@ metadata:
   name: pod-served-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
   labels:
     app: pod-served-{{ .Iteration }}
-    ns: served-ns-{{ .Iteration }} 
+    ns: served-ns-{{ .Iteration }}-{{ .Replica }}
 spec:
   containers:
   - name: perfapp-1
