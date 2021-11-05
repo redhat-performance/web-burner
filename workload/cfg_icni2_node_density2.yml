@@ -25,7 +25,7 @@ jobs:
     cleanup: false
     namespace: normal-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
@@ -46,12 +46,12 @@ jobs:
     cleanup: false
     namespace: normal-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: true
     jobIterationDelay: 0s
-    jobPause: 20s
+    jobPause: 0s
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 60
@@ -68,7 +68,7 @@ jobs:
     cleanup: false
     namespace: served-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
@@ -90,12 +90,12 @@ jobs:
     cleanup: false
     namespace: served-ns-{{ $val }}
     podWait: false
-    waitWhenFinished: false
+    waitWhenFinished: true
     waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
-    jobPause: 5s
+    jobPause: 0s
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 3
