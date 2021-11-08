@@ -89,12 +89,20 @@ token=$(oc sa get-token -n openshift-monitoring prometheus-k8s)
 popd
 
 mkdir -p logs
+LOGFILE=logs/test_`date +'%Y%m%d%H%M'`.log
+
+source metrics.sh 2>&1 | tee $LOGFILE
 
 echo "Lets create SPK pods.."
-unbuffer kube-burner init -c workload/cfg_icni2_serving_resource_init.yml -t ${token} --uuid 1234 2>&1 | tee logs/icni2_serving_resource_init_`date +'%Y%m%d%H%M'`.log
+unbuffer kube-burner init -c workload/cfg_icni2_serving_resource_init.yml -t ${token} --uuid 1234 2>&1 | tee -a $LOGFILE
 
 echo "Pausing for a minute.."
 sleep 60 # sleep for a minute before actual workload
 
+source metrics.sh 2>&1 | tee $LOGFILE
+
 echo "Lets create ICNI2 workloads..$uuid"
-unbuffer kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yaml 2>&1 | tee logs/icni2_${1}_`date +'%Y%m%d%H%M'`.log
+unbuffer kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yaml 2>&1 | tee -a $LOGFILE
+
+source metrics.sh 2>&1 | tee $LOGFILE
+
