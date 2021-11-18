@@ -33,9 +33,9 @@ jobs:
     jobPause: 20s
     objects:
       - objectTemplate: objectTemplates/cluster_density_configmap.yml
-        replicas: 30
+        replicas: 53
       - objectTemplate: objectTemplates/cluster_density_secret.yml
-        replicas: 38
+        replicas: 66
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 38
       - objectTemplate: objectTemplates/node_density_pod_service.yml
