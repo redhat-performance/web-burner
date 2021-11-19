@@ -1,0 +1,43 @@
+global:
+  writeToFile: true
+  metricsDirectory: collected-metrics
+  measurements:
+    - name: podLatency
+      esIndex: kube-burner
+  indexerConfig:
+    enabled: true
+    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    insecureSkipVerify: true
+    defaultIndex: kube-burner
+    type: elastic
+
+jobs:
+{{ $servedLimit := multiply 35 .SCALE }}
+{{ range $index, $val := sequence 1 $servedLimit }}
+  - name: kubelet-density-heavy-{{ $val }}
+    jobIterations: 1
+    jobType: create
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    namespace: served-ns-{{ $val }}
+    waitWhenFinished: true
+    cleanup: false
+    verifyObjects: true
+    errorOnVerify: false
+    podWait: false
+    objects:
+
+      - objectTemplate: objectTemplates/postgres-deployment.yml
+        replicas: 30
+
+      - objectTemplate: objectTemplates/app-deployment.yml
+        replicas: 30
+        inputVars:
+          readinessPeriod: 10
+
+      - objectTemplate: objectTemplates/postgres-service.yml
+        replicas: 30
+
+{{ end }}
+
