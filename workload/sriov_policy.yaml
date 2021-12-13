@@ -9,7 +9,7 @@ spec:
     pfNames:
      - $sriov_nic
   nodeSelector:
-    node-role.kubernetes.io/worker-lb: ""
+    node-role.kubernetes.io/worker-spk: ""
   numVfs: 64
   resourceName: intelnics2
 
