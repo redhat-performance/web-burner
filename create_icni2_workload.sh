@@ -7,7 +7,7 @@ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14.1}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
-export BFD=${BFD:-true}
+export BFD=${BFD:-false}
 
 export vf_serving_factor=140
 num_vfs=$(( SCALE*vf_serving_factor))
@@ -35,13 +35,13 @@ fi
 
 pushd ./workload
 
-lb_workers=$(oc get nodes | grep worker-lb | awk '{print $1}') # get all worker-lb nodes
+lb_workers=$(oc get nodes | grep worker-spk | awk '{print $1}') # get all worker-spk nodes
 lb_workers=($lb_workers)
-# Need at least 4 worker-lb nodes for spk pods
+# Need at least 4 worker-spk nodes for spk pods
 if [[ ${#lb_workers[@]} -ge $lb_count ]] ; then
-  echo "Found enough worker-lb nodes for spk pods"
+  echo "Found enough worker-spk nodes for spk pods"
 else
-  echo "Not enough worker-lb nodes, labeling nodes"
+  echo "Not enough worker-spk nodes, labeling nodes"
   all_workers=$(oc get nodes | grep worker | grep -v worker-lb | awk '{print $1}') # get all worker nodes except worker-lb
   all_workers=($all_workers)
   if [[ $lb_count-${#lb_workers[@]} -gt ${#all_workers[@]} ]]; then
@@ -51,21 +51,21 @@ else
   count=0 
   while [[ $count -le $lb_count-1 ]]; do
     echo "Label worker nodes.."
-    oc label node ${all_workers[$count]} node-role.kubernetes.io/worker-lb="" --overwrite=true
+    oc label node ${all_workers[$count]} node-role.kubernetes.io/worker-spk="" --overwrite=true
     count=$((count+1))
   done
 fi
 
 # Find the right SR-IOV PF
 sriov_nic=""
-for i in $(oc get nodes | grep worker-lb | awk '{print $1}')
+for i in $(oc get nodes | grep worker-spk | awk '{print $1}')
 do 
   nic=$(ssh -i /home/kni/.ssh/id_rsa -o StrictHostKeyChecking=no core@$i "sudo ovs-vsctl list-ports br-ex | head -1")
   if [[ $sriov_nic == "" ]]; then
     echo "Setting SR-IOV PF to $nic"
     export sriov_nic=$nic
   elif [[ $sriov_nic != $nic ]]; then
-    echo "SR-IOV PF is not matching with other worker-lb nodes"
+    echo "SR-IOV PF is not matching with other worker-spk nodes"
     exit 1
   fi
 done
@@ -75,8 +75,8 @@ echo "Creating SRIOVNetworkNodePolicy.."
 envsubst < sriov_policy.yaml | oc apply -f -
 sleep 60 # sleep for 60 seconds before checking for status
 
-echo "Waiting for the worker-lb node to be ready.."
-for mcp in $(oc get mcp worker-lb worker --ignore-not-found --no-headers | awk '{print $1}')
+echo "Waiting for the worker-spk node to be ready.."
+for mcp in $(oc get mcp --no-headers | awk '{print $1}')
 do 
   oc wait --for=condition=Updated --timeout=3600s mcp $mcp
   echo "Nice! $mcp is updated"

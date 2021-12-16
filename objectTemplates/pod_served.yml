@@ -1,22 +1,35 @@
 ---
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-served-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+kind: Deployment
+apiVersion: apps/v1
+metadata:    
+  name: dep-served-init-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
 spec:
-  containers:
-  - args:
-    - sleep
-    - infinity
-    name: app
-    image: k8s.gcr.io/pause:3.1
-    ports:
-    - containerPort: 80
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: serving
-            operator: DoesNotExist
-
+  template:
+    metadata:
+      name: pod-served-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+      labels:
+        app: served-init-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+    spec:
+      containers:
+      - args:
+        - sleep
+        - infinity
+        name: app
+        image: k8s.gcr.io/pause:3.1
+        ports:
+        - containerPort: 80
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: worker-spk
+                operator: DoesNotExist
+  replicas: 1
+  selector:
+    matchLabels:
+     app: served-init-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+  triggers:
+  - type: ConfigChange
+  strategy:
+    type: RollingUpdate 
