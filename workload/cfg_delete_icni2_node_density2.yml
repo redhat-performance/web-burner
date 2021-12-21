@@ -35,6 +35,10 @@ jobs:
 
       - apiVersion: v1
         kind: Pod
-        labelSelector: {kube-burner-job: served-job-{{ $val }}}        
+        labelSelector: {kube-burner-job: served-job-{{ $val }}}   
+
+      - apiVersion: project.openshift.io/v1
+        kind: Project
+        labelSelector: {kube-burner-job: normal-service-job-{{ $val }}}
 {{ end }}
 
