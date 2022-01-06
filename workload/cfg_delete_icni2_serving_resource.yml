@@ -1,0 +1,52 @@
+---
+global:
+  writeToFile: true
+  metricsDirectory: collected-metrics
+  measurements:
+    - name: podLatency
+      esIndex: kube-burner
+  indexerConfig:
+    enabled: false
+    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    insecureSkipVerify: true
+    defaultIndex: kube-burner
+    type: elastic
+
+jobs:
+
+  - name: delete-job
+    jobType: delete
+    qps: 20
+    burst: 20
+    objects:
+      - apiVersion: apps/v1
+        kind: Deployment
+        labelSelector: {kube-burner-job: init-served-job}
+
+      - apiVersion: apps/v1
+        kind: Deployment
+        labelSelector: {kube-burner-job: serving-job}
+
+      - apiVersion: sriovnetwork.openshift.io/v1
+        kind: SriovNetwork
+        labelSelector: {kube-burner-job: create-networks-job}
+
+      - apiVersion: v1
+        kind: Configmap
+        labelSelector: {kube-burner-job: create-cms-job}
+
+      - apiVersion: v1
+        kind: Secret
+        labelSelector: {kube-burner-job: create-secrets-job}
+
+      - apiVersion: v1
+        kind: Configmap
+        labelSelector: {kube-burner-job: init-job}
+
+      - apiVersion: project.openshift.io/v1
+        kind: Project
+        labelSelector: {kube-burner-job: init-served-job}
+
+      - apiVersion: project.openshift.io/v1
+        kind: Project
+        labelSelector: {kube-burner-job: init-job}

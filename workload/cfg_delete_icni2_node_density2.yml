@@ -1,0 +1,44 @@
+---
+ 
+global:
+  writeToFile: true
+  metricsDirectory: collected-metrics
+  measurements:
+    - name: podLatency
+      esIndex: kube-burner
+  indexerConfig:
+    enabled: false
+    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    insecureSkipVerify: true
+    defaultIndex: kube-burner
+    type: elastic
+
+jobs:
+{{ $normalLimit := multiply 35 .SCALE }}
+{{ range $index, $val := sequence 1 $normalLimit }}
+  - name: delete-service-job-{{ $val }}
+    jobType: delete
+    qps: {{ $.QPS }}
+    burst: {{ $.BURST }}
+    objects:
+      - apiVersion: v1
+        kind: Service
+        labelSelector: {kube-burner-job: normal-service-job-{{ $val }}}
+
+      - apiVersion: v1
+        kind: Pod
+        labelSelector: {kube-burner-job: normal-job-{{ $val }}}
+
+      - apiVersion: v1
+        kind: Service
+        labelSelector: {kube-burner-job: served-service-job-{{ $val }}}
+
+      - apiVersion: v1
+        kind: Pod
+        labelSelector: {kube-burner-job: served-job-{{ $val }}}   
+
+      - apiVersion: project.openshift.io/v1
+        kind: Project
+        labelSelector: {kube-burner-job: normal-service-job-{{ $val }}}
+{{ end }}
+
