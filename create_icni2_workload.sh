@@ -42,7 +42,7 @@ if [[ ${#lb_workers[@]} -ge $lb_count ]] ; then
   echo "Found enough worker-spk nodes for spk pods"
 else
   echo "Not enough worker-spk nodes, labeling nodes"
-  all_workers=$(oc get nodes | grep worker | grep -v worker-lb | awk '{print $1}') # get all worker nodes except worker-lb
+  all_workers=$(oc get nodes | grep worker | grep -v worker-lb | grep -v worker-rt | awk '{print $1}') # get all worker nodes except worker-lb and worker-rt
   all_workers=($all_workers)
   if [[ $lb_count-${#lb_workers[@]} -gt ${#all_workers[@]} ]]; then
       echo "Not enough nodes to label" # there should be enough unlabelled nodes to label them

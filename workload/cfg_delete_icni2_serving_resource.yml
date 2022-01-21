@@ -1,10 +1,7 @@
 ---
 global:
-  writeToFile: true
+  writeToFile: false
   metricsDirectory: collected-metrics
-  measurements:
-    - name: podLatency
-      esIndex: kube-burner
   indexerConfig:
     enabled: false
     esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
