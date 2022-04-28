@@ -9,4 +9,4 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    ns: served-ns-{{ .Iteration }}-{{ .Replica }}
+    ns: served-ns-{{ .Replica }}

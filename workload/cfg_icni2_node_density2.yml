@@ -22,7 +22,7 @@ jobs:
     namespacedIterations: true
     cleanup: false
     namespace: served-ns
-    waitWhenFinished: true
+    podWait: true
     verifyObjects: true
     errorOnVerify: true
     objects:

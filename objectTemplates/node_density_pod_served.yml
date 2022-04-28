@@ -5,6 +5,7 @@ metadata:
   name: pod-served-{{ .Replica }}
   labels:
     app: pod-served
+    ns: served-ns-{{.Replica}}
 spec:
   containers:
   - name: perfapp-1
