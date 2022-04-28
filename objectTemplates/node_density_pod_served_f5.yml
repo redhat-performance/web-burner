@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-served-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
+  name: pod-served-{{ .Iteration }}-{{ .Replica }}
   labels:
     app: f5-f5-served-ns-{{ .ns }}-{{ .Replica }}
 spec:

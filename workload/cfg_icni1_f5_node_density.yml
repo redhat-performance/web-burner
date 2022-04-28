@@ -14,8 +14,6 @@ global:
     type: elastic
 
 jobs:
-
-jobs:
   - name: node-density
     jobType: create
     jobIterations: 33
@@ -35,7 +33,7 @@ jobs:
         replicas: 60
 
 
-  - name: f5-job
+  - name: icni1
     jobType: create
     jobIterations: 35
     qps: {{ .QPS }}

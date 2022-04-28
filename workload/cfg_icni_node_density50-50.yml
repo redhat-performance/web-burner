@@ -14,133 +14,54 @@ global:
     type: elastic
 
 jobs:
-{{ range $index, $val := sequence 1 33 }}
-  - name: service-job-{{ $val }}
+  - name: node-density
     jobType: create
-    jobIterations: 1
-    qps: 20
-    burst: 20
-    namespacedIterations: false
+    jobIterations: 33
+    qps: {{ .QPS }}
+    burst: {{ .BURST }}
+    namespacedIterations: true
     cleanup: false
-    namespace: f5-served-ns-{{ $val }}
-    podWait: false
-    waitWhenFinished: false
-    waitFor: ["Pod"]
+    namespace: f5-served-ns
+    podWait: true
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
       - objectTemplate: objectTemplates/node_density_pod_service_served.yml
         replicas: 1
-{{ end }}
-
-{{ range $index, $val := sequence 1 33}}
-  - name: normal-job-{{ $val }}
-    jobType: create
-    jobIterations: 1
-    qps: 20
-    burst: 20
-    namespacedIterations: false
-    cleanup: false
-    namespace: f5-served-ns-{{ $val }}
-    podWait: false
-    waitWhenFinished: true
-    waitFor: ["Pod"]
-    verifyObjects: true
-    errorOnVerify: true
-    jobIterationDelay: 0s
-    jobPause: 0s
-    objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 30
-{{ end }}
 
-{{ range $index, $val := sequence 1 35 }}
-  - name: service-job-2-{{ $val }}
+  - name: icni1
     jobType: create
-    jobIterations: 1
-    qps: 20
-    burst: 20
-    namespacedIterations: false
+    jobIterations: 35
+    qps: {{ .QPS }}
+    burst: {{ .QPS }}
+    namespacedIterations: true
     cleanup: false
-    namespace: f5-served-ns-{{ $val }}
-    podWait: false
-    waitWhenFinished: false
-    waitFor: ["Pod"]
+    namespace: f5-served-ns
+    podWait: true
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
     objects:
       - objectTemplate: objectTemplates/node_density_pod_service_f5.yml
         replicas: 3
-        inputVars:
-          ns: {{ $val }}
-{{ end }}
-
-{{ range $index, $val := sequence 1 35 }}
-  - name: served-job-{{ $val }}
-    jobType: create
-    jobIterations: 1
-    qps: 20
-    burst: 20
-    namespacedIterations: false
-    cleanup: false
-    namespace: f5-served-ns-{{ $val }}
-    podWait: false
-    waitWhenFinished: true
-    waitFor: ["Pod"]
-    verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
-    objects:
       - objectTemplate: objectTemplates/node_density_pod_served_f5.yml
         replicas: 3
-        inputVars:
-          ns: {{ $val }}
-{{ end }}
 
-{{ $normalLimit := multiply 35 .SCALE }}
-{{ range $index, $val := sequence 1 $normalLimit }}
-  - name: icni2-service-job-{{ $val }}
+  - name: icni2
     jobType: create
-    jobIterations: 1       
+    jobIterations: {{ multiply 35 .SCALE }}
     qps: {{ $.QPS }}
     burst: {{ $.BURST }}
-    namespacedIterations: false
+    namespacedIterations: true
     cleanup: false
-    namespace: served-ns-{{ $val }}
-    podWait: false
-    waitWhenFinished: false
-    waitFor: ["Pod"]
+    namespace: served-ns
+    podWait: true
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
       - objectTemplate: objectTemplates/node_density_pod_service_served.yml
         replicas: 1
-{{ end }}
 
-{{ range $index, $val := sequence 1 $normalLimit}}
-  - name: icni2-served-job-{{ $val }}
-    jobType: create
-    jobIterations: 1
-    qps:  {{ $.QPS }}
-    burst: {{ $.BURST }}
-    namespacedIterations: false
-    cleanup: false
-    namespace: served-ns-{{ $val }}
-    podWait: false
-    waitWhenFinished: true
-    waitFor: ["Pod"]
-    verifyObjects: true
-    errorOnVerify: true
-    jobIterationDelay: 0s
-    jobPause: 0s
-    objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 33
-{{ end }}
