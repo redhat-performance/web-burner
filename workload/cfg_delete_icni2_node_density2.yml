@@ -5,9 +5,9 @@ global:
   metricsDirectory: collected-metrics
   indexerConfig:
     enabled: false
-    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    esServers: {{ .ES_SERVER }}
     insecureSkipVerify: true
-    defaultIndex: kube-burner
+    defaultIndex: {{ .ES_INDEX }}
     type: elastic
 
 jobs:

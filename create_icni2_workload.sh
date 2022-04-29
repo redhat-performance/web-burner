@@ -8,6 +8,9 @@ export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
 export BFD=${BFD:-false}
+export INDEXING=${INDEXING:-true}
+export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 
 export vf_serving_factor=140
 num_vfs=$(( SCALE*vf_serving_factor))
