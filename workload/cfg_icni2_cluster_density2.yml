@@ -1,7 +1,7 @@
 ---
  
 global:
-  writeToFile: true
+  writeToFile: false
   metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
@@ -14,23 +14,17 @@ global:
     type: elastic
 
 jobs:
-{{ $servedLimit := multiply 35 .SCALE }}
-{{ range $index, $val := sequence 1 $servedLimit }}
-  - name: job-2-{{ $val }}
+  - name: cluster-density
     jobType: create
-    jobIterations: 1
+    jobIterations: {{ multiply 35 .SCALE }}
     qps: {{ $.QPS }}
     burst: {{ $.BURST }}
-    namespacedIterations: false
+    namespacedIterations: true
     cleanup: false
-    namespace: served-ns-{{ $val }} 
-    podWait: false
-    waitWhenFinished: true
-    waitFor: ["Pod"]
+    namespace: served-ns
+    podWait: true
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
       - objectTemplate: objectTemplates/cluster_density_configmap.yml
         replicas: 30
@@ -42,7 +36,6 @@ jobs:
         replicas: 25
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 5
-{{ end }}
 
   - name: app-job-1
     jobType: create
@@ -53,12 +46,8 @@ jobs:
     cleanup: false
     namespace: served-ns
     podWait: false
-    waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
         replicas: 84
@@ -95,13 +84,9 @@ jobs:
     namespacedIterations: true
     cleanup: false
     namespace: served-ns
-    podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
 {{ range $index, $val := sequence 1 3 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
@@ -131,13 +116,9 @@ jobs:
     namespacedIterations: true
     cleanup: false
     namespace: served-ns
-    podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
 {{ range $index, $val := sequence 1 6 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
@@ -176,13 +157,9 @@ jobs:
     namespacedIterations: true
     cleanup: false
     namespace: served-ns
-    podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
 {{ range $index, $val := sequence 1 12 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
@@ -221,13 +198,9 @@ jobs:
     namespacedIterations: true
     cleanup: false
     namespace: served-ns
-    podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
+    errorOnVerify: true
     objects:
 {{ range $index, $val := sequence 1 29 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
