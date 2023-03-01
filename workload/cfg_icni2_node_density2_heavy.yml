@@ -3,12 +3,12 @@ global:
   metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
-      esIndex: kube-burner
+      defaultIndex: {{ .ES_INDEX }}
   indexerConfig:
-    enabled: true
-    esServers: [https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com]
+    enabled: {{ .INDEXING }}
+    esServers: {{ .ES_SERVER }}
     insecureSkipVerify: true
-    defaultIndex: kube-burner
+    defaultIndex: {{ .ES_INDEX }}
     type: elastic
 
 jobs:
