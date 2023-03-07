@@ -5,7 +5,7 @@ global:
   metricsDirectory: collected-metrics
   indexerConfig:
     enabled: false
-    esServers: {{ .ES_SERVER }}
+    esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
     type: elastic
