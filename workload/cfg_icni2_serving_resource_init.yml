@@ -30,7 +30,6 @@ jobs:
     jobIterationDelay: 0s
     jobPause: 0s
     objects:
-
       - objectTemplate: objectTemplates/patch_script_configmap.yml
         replicas: 1
 
@@ -53,6 +52,44 @@ jobs:
       - objectTemplate: objectTemplates/sriov_network.yml
         replicas: 1
 
+  - name: create-serviceaccounts-job
+    jobType: create
+    jobIterations: {{ multiply 35 .SCALE }}
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: serving-ns
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["ServiceAccount"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 1s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/permissionsServiceAccount.yml
+        replicas: 1
+
+  - name: create-clusterbindings-jobs
+    jobType: create
+    jobIterations: {{ multiply 35 .SCALE }}
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: serving-ns
+    podWait: false
+    waitWhenFinished: false
+    waitFor: ["ClusterRoleBinding"]
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 1s
+    jobPause: 0s
+    objects:
+      - objectTemplate: objectTemplates/permissionsClusterRoleBinding.yml
+        replicas: 1
+
   - name: create-cms-job
     jobType: create
     jobIterations: {{ multiply 35 .SCALE }}
@@ -69,7 +106,7 @@ jobs:
     jobIterationDelay: 1s
     jobPause: 0s
     objects:
-      - objectTemplate: objectTemplates/cm_frr.yaml
+      - objectTemplate: objectTemplates/cm_frr.yml
         replicas: 1
 
   - name: create-secrets-job
@@ -88,7 +125,7 @@ jobs:
     jobIterationDelay: 0s
     jobPause: 0s
     objects:
-      - objectTemplate: objectTemplates/secret_kubeconfig.yaml
+      - objectTemplate: objectTemplates/secret_kubeconfig.yml
         replicas: 1
 
   - name: init-served-job

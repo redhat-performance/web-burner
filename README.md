@@ -4,7 +4,7 @@
 * Run webfuse with bigip and create 35 test namespace using ICNI1.0
 * ICNI1.0
 	* Run kubeburner using node density and cluster density config
-		* `kube-burner init -c cfg_icni2_cluster_density.yml -t $(oc sa get-token -n openshift-monitoring prometheus-k8s) --uuid $(uuidgen) --prometheus-url  https://prometheus-k8s-openshift-monitoring.apps.test82.myocp4.com  -m metrics_full.yaml`
+		* `kube-burner init -c cfg_icni2_cluster_density.yml -t $(oc sa get-token -n openshift-monitoring prometheus-k8s) --uuid $(uuidgen) --prometheus-url  https://prometheus-k8s-openshift-monitoring.apps.test82.myocp4.com  -m metrics_full.yml`
 * ICNI2.0
 	* Run workload
 		* `./create_icni2_workload.sh <workload> [scale_factor] [bfd_enabled]`

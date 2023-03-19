@@ -30,7 +30,7 @@ prometheus_url=$(oc get routes -n openshift-monitoring prometheus-k8s --no-heade
 token=$(oc sa get-token -n openshift-monitoring prometheus-k8s)
 
 echo "Lets Delete ICNI2 workloads.."
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yaml 
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml 
 
 echo "Pausing for a minute.."
 sleep 60 # sleep for a minute before actual workload

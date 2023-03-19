@@ -27,14 +27,17 @@ if [ $? -ne 0 ]; then
     sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
 fi
 
-
 export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
-oc create secret generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yaml
+oc create secret generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 
 if [ $# -eq 0 ]; then
     echo "Pass kube-burner config"
     exit 1
 fi
+
+# Creating clusterRole
+echo "Creating clusterRole.."
+kubectl apply -f objectTemplates/permissionsClusterRole.yml
 
 pushd ./workload
 
@@ -75,7 +78,7 @@ done
 
 # Applying SR-IOV Network Node policy
 echo "Creating SRIOVNetworkNodePolicy.."
-envsubst < sriov_policy.yaml | oc apply -f -
+envsubst < sriov_policy.yml | oc apply -f -
 sleep 60 # sleep for 60 seconds before checking for status
 
 echo "Waiting for the worker-spk node to be ready.."
@@ -99,6 +102,6 @@ sleep 60 # sleep for a minute before actual workload
 
 
 echo "Lets create ICNI2 workloads..$uuid"
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yaml 
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml 
 
 

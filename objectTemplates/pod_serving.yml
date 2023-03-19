@@ -15,32 +15,52 @@ spec:
         k8s.ovn.org/routing-network: serving-ns-{{ .Iteration }}/sriov-net-{{ .Iteration }}
         k8s.ovn.org/bfd-enabled: ""
         k8s.v1.cni.cncf.io/networks: |-
-          [{ "name": "sriov-net-{{ .Iteration }}", "ips": [ "192.168.{{ add 218 .Replica }}.{{ .Iteration }}/21" ]}]
+          [{
+              "name": "sriov-net-{{ .Iteration }}",
+              "ips": [ "192.168.{{ add 218 .Replica }}.{{ .Iteration }}/21" ]
+          }]
         k8s.v1.cni.cncf.io/network-status: |-
           [{
               "name": "serving-ns-{{ .Iteration }}/sriov-net-{{ .Iteration }}",
               "interface": "net1",
-              "ips": [
-                  "192.168.{{ add 218 .Replica }}.{{ .Iteration }}"
-                ],
+              "ips": [ "192.168.{{ add 218 .Replica }}.{{ .Iteration }}" ],
               "dns": {}
           }]
       labels:
         serving: true-{{ .Replica }}
     spec:
+      serviceAccountName: internal-kubectl
       containers:
       - name: bfd
-        image: quay.io/fpaoline/ovnkbfdtest:0.2
-        command: ["/bin/sh","-c"]
-        args: ["/usr/lib/frr/frrinit.sh start && sleep infinity"]
+        image: quay.io/wcaban/frr
+        command:
+          - sh
+          - -c
+          - >-
+             cp /config/* /etc/frr/ &&
+             for i in {2..254}; do echo " peer $(kubectl get nodes -o jsonpath='{.items[0].metadata.annotations.k8s\.ovn\.org\/node-primary-ifaddr}' | cut -d '"' -f4- | sed 's/\.[^.]*$//').$i" >> /etc/frr/frr.conf; done &&
+             echo "  no shutdown" >> /etc/frr/frr.conf &&
+             echo " !" >> /etc/frr/frr.conf &&
+             echo "! subnets for each node" >> /etc/frr/frr.conf &&
+             kubectl get nodes -o jsonpath='{range .items[*].metadata.annotations}{.k8s\.ovn\.org\/node\-subnets}{.k8s\.ovn\.org\/node\-primary\-ifaddr}{"\n"}{end}' | awk -F'["/]' '{print "ip route " $4"/"$5 " " $9}' >> /etc/frr/frr.conf &&
+             ip a a 172.18.0.10/32 dev lo &&
+             /usr/libexec/frr/frrinit.sh start &&
+             tail -f /tmp/frr.log
         ports:
-        - containerPort: 3784
+        - name: bfd
+          containerPort: 3784
           protocol: UDP
+        - name: stats
+          containerPort: 9000
+          protocol: TCP
         securityContext:
-          privileged: true
+          capabilities:
+            add: ["NET_ADMIN", "NET_RAW", "SYS_ADMIN", "NET_BIND_SERVICE"]
         volumeMounts:
-        - name: config-volume
-          mountPath: /etc/frr
+          - name: config-volume
+            mountPath: /config
+          - name: pre-install
+            mountPath: /etc/pre-install
       - name: patch
         image: quay.io/mukrishn/jetski:latest
         imagePullPolicy: IfNotPresent
@@ -58,6 +78,8 @@ spec:
         - name: pod_name
           value: pod-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
       volumes:
+        - name: pre-install
+          emptyDir: {}
         - name: config-volume
           configMap:
             name: frr
