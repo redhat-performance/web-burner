@@ -9,7 +9,13 @@ spec:
   containers:
   - name: sleep-1
     imagePullPolicy: IfNotPresent
-    image: gcr.io/google_containers/pause-amd64:3.0
+    image: quay.io/centos/centos
+    readinessProbe:
+      exec:
+        command:
+        - ping
+        - -c1
+        - 172.18.0.10
     resources:
       request:
         memory: '100Mi'

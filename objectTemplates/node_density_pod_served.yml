@@ -32,8 +32,14 @@ spec:
     - sleep
     - infinity
     name: app
-    image: k8s.gcr.io/pause:3.1
+    image: quay.io/centos/centos
     imagePullPolicy: IfNotPresent
+    readinessProbe:
+      exec:
+        command:
+        - ping
+        - -c1
+        - 172.18.0.10
     resources:
       request:
         memory: '100Mi'
