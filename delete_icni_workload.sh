@@ -8,6 +8,8 @@ export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
 export BFD=${BFD:-false}
+#The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
+export LIMITCOUNT=${LIMITCOUNT:-35} 
 
 kube_burner_exists=$(which kube-burner)
 

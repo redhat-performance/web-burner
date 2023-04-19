@@ -16,7 +16,7 @@ global:
 jobs:
   - name: cluster-density
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: {{ $.QPS }}
     burst: {{ $.BURST }}
     namespacedIterations: true
