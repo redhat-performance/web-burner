@@ -54,7 +54,7 @@ jobs:
 
   - name: create-serviceaccounts-job
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -73,7 +73,7 @@ jobs:
 
   - name: create-clusterbindings-jobs
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
