@@ -102,7 +102,7 @@ jobs:
           ns: {{ $val }}
 {{ end }}
 
-{{ $normalLimit := multiply 35 .SCALE }}
+{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $normalLimit }}
   - name: icni2-service-job-{{ $val }}
     jobType: create

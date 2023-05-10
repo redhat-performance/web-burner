@@ -27,7 +27,7 @@ jobs:
   #   - kind: Pod
   #     labelSelector: {kube-burner-job: init-job}
         
-{{ $normalLimit := multiply 35 .SCALE }}
+{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $normalLimit }}
   - name: job-{{ $val }}
     jobType: create

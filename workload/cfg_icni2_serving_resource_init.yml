@@ -16,7 +16,7 @@ jobs:
        
   - name: init-job
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -35,7 +35,7 @@ jobs:
 
   - name: create-networks-job
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 10
     burst: 10
     namespacedIterations: false
@@ -92,7 +92,7 @@ jobs:
 
   - name: create-cms-job
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -111,7 +111,7 @@ jobs:
 
   - name: create-secrets-job
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -130,7 +130,7 @@ jobs:
 
   - name: init-served-job
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -149,7 +149,7 @@ jobs:
 
   - name: serving-job
     jobType: create
-    jobIterations: {{ multiply 35 .SCALE }}
+    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
