@@ -11,7 +11,7 @@ global:
     type: elastic
 
 jobs:
-{{ $servedLimit := multiply 35 .SCALE }}
+{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
   - name: delete-jobs
     jobType: delete
     qps: {{ .QPS }}

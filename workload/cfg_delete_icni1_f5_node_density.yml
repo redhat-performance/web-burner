@@ -11,7 +11,7 @@ global:
     type: elastic
 
 jobs:
-{{ $normalLimit := multiply 35 .SCALE }}
+{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $normalLimit }}
   - name: delete-service-job-{{ $val }}
     jobType: delete

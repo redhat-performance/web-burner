@@ -14,7 +14,7 @@ global:
     type: elastic
 
 jobs:
-{{ $normalLimit := multiply 35 .SCALE }}
+{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $normalLimit }}
   - name: normal-service-job-{{ $val }}
     jobType: create
@@ -57,7 +57,7 @@ jobs:
         replicas: 60
 {{ end }}
 
-{{ $servedLimit := multiply 35 .SCALE }}
+{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $servedLimit }}
   - name: served-service-job-{{ $val }}
     jobType: create
