@@ -37,10 +37,6 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# Creating clusterRole
-echo "Creating clusterRole.."
-kubectl apply -f objectTemplates/permissionsClusterRole.yml
-
 pushd ./workload
 
 lb_workers=$(oc get nodes | grep worker-spk | awk '{print $1}') # get all worker-spk nodes
