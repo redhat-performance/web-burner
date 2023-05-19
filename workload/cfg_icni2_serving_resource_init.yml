@@ -69,9 +69,30 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 1s
     jobPause: 0s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/permissionsServiceAccount.yml
         replicas: 1
+
+  - name: create-clusterrole-job
+    jobType: create
+    jobIterations: 1
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: default
+    podWait: false
+    waitWhenFinished: false
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 1s
+    jobPause: 0s
+    preLoadImages: false
+    objects:
+      - objectTemplate: objectTemplates/permissionsClusterRole.yml
+        replicas: 1
+        namespaced: false
 
   - name: create-clusterbindings-jobs
     jobType: create
@@ -88,9 +109,11 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 1s
     jobPause: 0s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/permissionsClusterRoleBinding.yml
         replicas: 1
+        namespaced: false
 
   - name: create-cms-job
     jobType: create
