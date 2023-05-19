@@ -29,10 +29,10 @@ spec:
       labels:
         serving: true-{{ .Replica }}
     spec:
-      serviceAccountName: internal-kubectl
       containers:
       - name: bfd
         image: quay.io/wcaban/frr
+        serviceAccountName: internal-kubectl
         command:
           - sh
           - -c
