@@ -14,7 +14,7 @@ global:
     type: elastic
 
 jobs:
-{{ $normalLimit := multiply 35 .SCALE }}
+{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $normalLimit }}
   - name: normal-service-job-{{ $val }}
     jobType: create
@@ -31,6 +31,7 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/node_density_pod_service_served.yml
         replicas: 1
@@ -52,12 +53,13 @@ jobs:
     errorOnVerify: true
     jobIterationDelay: 0s
     jobPause: 0s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 60
 {{ end }}
 
-{{ $servedLimit := multiply 35 .SCALE }}
+{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $servedLimit }}
   - name: served-service-job-{{ $val }}
     jobType: create
@@ -74,6 +76,7 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/node_density_pod_service_served.yml
         replicas: 1
@@ -96,6 +99,7 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 3
@@ -117,6 +121,7 @@ jobs:
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 3

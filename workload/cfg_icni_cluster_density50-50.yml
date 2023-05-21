@@ -15,7 +15,7 @@ global:
 
 jobs:
 
-{{ $normalLimit := multiply 35 .SCALE }}
+{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $normalLimit }}
   - name: job-{{ $val }}
     jobType: create
@@ -247,7 +247,7 @@ jobs:
           ns: group-l-{{ $val }}                   
 {{ end }}
         
-{{ $servedLimit := multiply 35 .SCALE }}
+{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $servedLimit }}
   - name: job-2-{{ $val }}
     jobType: create

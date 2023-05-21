@@ -8,6 +8,8 @@ export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
 export BFD=${BFD:-false}
+#The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
+export LIMITCOUNT=${LIMITCOUNT:-35} 
 
 kube_burner_exists=$(which kube-burner)
 
@@ -30,7 +32,7 @@ prometheus_url=$(oc get routes -n openshift-monitoring prometheus-k8s --no-heade
 token=$(oc sa get-token -n openshift-monitoring prometheus-k8s)
 
 echo "Lets Delete ICNI2 workloads.."
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yaml 
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml 
 
 echo "Pausing for a minute.."
 sleep 60 # sleep for a minute before actual workload

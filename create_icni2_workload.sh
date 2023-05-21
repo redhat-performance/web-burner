@@ -3,7 +3,7 @@
 SCALE=$2
 BFD=$3
 
-export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-0.14.2}
+export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.3}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
@@ -11,6 +11,8 @@ export BFD=${BFD:-false}
 export INDEXING=${INDEXING:-true}
 export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
 export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
+#The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
+export LIMITCOUNT=${LIMITCOUNT:-35} 
 
 export vf_serving_factor=140
 num_vfs=$(( SCALE*vf_serving_factor))
@@ -27,9 +29,8 @@ if [ $? -ne 0 ]; then
     sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
 fi
 
-
 export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
-oc create secret generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yaml
+oc create secret generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 
 if [ $# -eq 0 ]; then
     echo "Pass kube-burner config"
@@ -75,7 +76,7 @@ done
 
 # Applying SR-IOV Network Node policy
 echo "Creating SRIOVNetworkNodePolicy.."
-envsubst < sriov_policy.yaml | oc apply -f -
+envsubst < sriov_policy.yml | oc apply -f -
 sleep 60 # sleep for 60 seconds before checking for status
 
 echo "Waiting for the worker-spk node to be ready.."
@@ -99,6 +100,6 @@ sleep 60 # sleep for a minute before actual workload
 
 
 echo "Lets create ICNI2 workloads..$uuid"
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yaml 
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml 
 
 

@@ -12,7 +12,7 @@ global:
     type: elastic
 
 jobs:
-{{ $servedLimit := multiply 35 .SCALE }}
+{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
 {{ range $index, $val := sequence 1 $servedLimit }}
   - name: kubelet-density-heavy-{{ $val }}
     jobIterations: 1
