@@ -1,7 +1,5 @@
 ---
 global:
-  writeToFile: false
-  metricsDirectory: collected-metrics
   indexerConfig:
     enabled: false
     esServers: ["{{.ES_SERVER}}"]

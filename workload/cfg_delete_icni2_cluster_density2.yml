@@ -1,8 +1,6 @@
 ---
  
 global:
-  writeToFile: false
-  metricsDirectory: collected-metrics
   indexerConfig:
     enabled: false
     esServers: ["{{.ES_SERVER}}"]
@@ -11,13 +9,13 @@ global:
     type: elastic
 
 jobs:
-{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
+{{ $servedLimit := mul .LIMITCOUNT .SCALE }}
   - name: delete-jobs
     jobType: delete
     qps: {{ .QPS }}
     burst: {{ .BURST }}
     objects:
-{{ range $index, $val := sequence 1 5 }}    
+{{ range $index, $val := untilStep 1 6 1 }}    
       - apiVersion: v1
         kind: Pod
         labelSelector: {kube-burner-job: app-job-{{ $val }}}
@@ -27,7 +25,7 @@ jobs:
         labelSelector: {kube-burner-job: app-job-{{ $val }}}
 {{ end }}
 
-{{ range $index, $val := sequence 1 $servedLimit }}
+{{ range $index, $val := untilStep 1 (add $servedLimit 1|int) 1 }}
   - name: delete-job-2-{{ $val }}
     jobType: delete
     jobIterations: 1
