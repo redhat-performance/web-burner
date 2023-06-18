@@ -3,11 +3,12 @@
 SCALE=$2
 BFD=$3
 
-export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.3}
+export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
 export BFD=${BFD:-false}
+export SRIOV=${SRIOV:-true}
 export INDEXING=${INDEXING:-true}
 export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
 export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
