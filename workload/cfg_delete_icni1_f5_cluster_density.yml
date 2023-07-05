@@ -1,12 +1,4 @@
 ---
- 
-global:
-  indexerConfig:
-    enabled: false
-    esServers: ["{{.ES_SERVER}}"]
-    insecureSkipVerify: true
-    defaultIndex: {{ .ES_INDEX }}
-    type: elastic
 
 jobs:
         

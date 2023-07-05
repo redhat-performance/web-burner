@@ -3,7 +3,7 @@
 SCALE=$2
 BFD=$3
 
-export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.6}
+export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
@@ -25,7 +25,7 @@ kube_burner_exists=$(which kube-burner)
 
 if [ $? -ne 0 ]; then
     echo "Installing kube-burner"
-    wget -O kube-burner.tar.gz https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz
+    wget -O kube-burner.tar.gz https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-V${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz
     sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
 fi
 

@@ -3,7 +3,6 @@ global:
   measurements:
     - name: podLatency
   indexerConfig:
-    enabled: {{ .INDEXING }}
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
@@ -86,7 +85,6 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/permissionsClusterRole.yml
         replicas: 1
-        namespaced: false
 
   - name: create-clusterbindings-jobs
     jobType: create
@@ -106,7 +104,6 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/permissionsClusterRoleBinding.yml
         replicas: 1
-        namespaced: false
 
   - name: create-cms-job
     jobType: create
