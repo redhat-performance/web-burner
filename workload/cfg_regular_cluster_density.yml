@@ -1,11 +1,8 @@
 ---
  
 global:
-  writeToFile: true
-  metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
-      esIndex: {{ .ES_INDEX }}
   indexerConfig:
     enabled: {{ .INDEXING }}
     esServers: ["{{.ES_SERVER}}"]
@@ -28,7 +25,7 @@ jobs:
   #     labelSelector: {kube-burner-job: init-job}
         
 
-{{ range $index, $val := sequence 1 35 }}
+{{ range $index, $val := untilStep 1 36 1 }}
   - name: job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -39,11 +36,11 @@ jobs:
     namespace: normal-ns-{{ $val }} 
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/cluster_density_configmap.yml
         replicas: 30
@@ -71,11 +68,11 @@ jobs:
     namespace: app-served-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 84
@@ -114,13 +111,13 @@ jobs:
     namespace: app-served-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    preLoadImages: false
     objects:
-{{ range $index, $val := sequence 1 3 }}
+{{ range $index, $val := untilStep 1 4 1 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 24
         inputVars:
@@ -150,13 +147,13 @@ jobs:
     namespace: app-served-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    preLoadImages: false
     objects:
-{{ range $index, $val := sequence 1 6 }}
+{{ range $index, $val := untilStep 1 7 1 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 12
         inputVars:
@@ -195,13 +192,13 @@ jobs:
     namespace: app-served-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 20s
+    preLoadImages: false
     objects:
-{{ range $index, $val := sequence 1 12 }}
+{{ range $index, $val := untilStep 1 13 1 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 8
         inputVars:
@@ -240,13 +237,13 @@ jobs:
     namespace: app-served-ns
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 20s
     jobPause: 0s
+    preLoadImages: false
     objects:
-{{ range $index, $val := sequence 1 29 }}
+{{ range $index, $val := untilStep 1 30 1 }}
       - objectTemplate: objectTemplates/cluster_density_pod_served.yml
         replicas: 4
         inputVars:

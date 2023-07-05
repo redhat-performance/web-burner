@@ -1,11 +1,8 @@
 ---
  
 global:
-  writeToFile: true
-  metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
-      esIndex: {{ .ES_INDEX }}
   indexerConfig:
     enabled: {{ .INDEXING }}
     esServers: ["{{.ES_SERVER}}"]
@@ -27,8 +24,8 @@ jobs:
   #   - kind: Pod
   #     labelSelector: {kube-burner-job: init-job}
         
-{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
-{{ range $index, $val := sequence 1 $normalLimit }}
+{{ $normalLimit := mul .LIMITCOUNT .SCALE | int }}
+{{ range $index, $val := untilStep 1 (add $normalLimit 1|int) 1 }}
   - name: job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -39,7 +36,6 @@ jobs:
     namespace: f5-served-ns-{{ $val }} 
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -65,7 +61,7 @@ jobs:
 
   - name: app-job-1
     jobType: create
-    jobIterations: {{ multiply 2 .SCALE }}
+    jobIterations: {{ mul 2 .SCALE }}
     qps: {{ .QPS }}
     burst: {{ .BURST }}
     namespacedIterations: true
@@ -73,7 +69,6 @@ jobs:
     namespace: f5-served-ns 
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -108,7 +103,7 @@ jobs:
 
   - name: app-job-2
     jobType: create
-    jobIterations: {{ multiply 2 .SCALE }}
+    jobIterations: {{ mul 2 .SCALE }}
     qps: {{ .QPS }}
     burst: {{ .BURST }}
     namespacedIterations: true
@@ -116,13 +111,12 @@ jobs:
     namespace: f5-served-ns 
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
     objects:
-{{ range $index, $val := sequence 1 3 }}
+{{ range $index, $val := untilStep 1 4 1 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
         replicas: 24
         inputVars:
@@ -144,7 +138,7 @@ jobs:
 
   - name: app-job-3
     jobType: create
-    jobIterations: {{ multiply 2 .SCALE }}
+    jobIterations: {{ mul 2 .SCALE }}
     qps: {{ .QPS }}
     burst: {{ .BURST }}
     namespacedIterations: true
@@ -152,13 +146,12 @@ jobs:
     namespace: f5-served-ns 
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
     objects:
-{{ range $index, $val := sequence 1 6 }}
+{{ range $index, $val := untilStep 1 7 1 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
         replicas: 12
         inputVars:
@@ -189,7 +182,7 @@ jobs:
 
   - name: app-job-4
     jobType: create
-    jobIterations: {{ multiply 2 .SCALE }}
+    jobIterations: {{ mul 2 .SCALE }}
     qps: {{ .QPS }}
     burst: {{ .BURST }}
     namespacedIterations: true
@@ -197,13 +190,12 @@ jobs:
     namespace: f5-served-ns 
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
     objects:
-{{ range $index, $val := sequence 1 12 }}
+{{ range $index, $val := untilStep 1 13 1 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
         replicas: 8
         inputVars:
@@ -234,7 +226,7 @@ jobs:
 
   - name: app-job-5
     jobType: create
-    jobIterations: {{ multiply 2 .SCALE }}
+    jobIterations: {{ mul 2 .SCALE }}
     qps: {{ .QPS }}
     burst: {{ .BURST }}
     namespacedIterations: true
@@ -242,13 +234,12 @@ jobs:
     namespace: f5-served-ns 
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
     jobPause: 0s
     objects:
-{{ range $index, $val := sequence 1 29 }}
+{{ range $index, $val := untilStep 1 30 1 }}
       - objectTemplate: objectTemplates/cluster_density_dep_served_ports.yml
         replicas: 4
         inputVars:
