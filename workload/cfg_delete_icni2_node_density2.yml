@@ -1,13 +1,5 @@
 ---
  
-global:
-  indexerConfig:
-    enabled: false
-    esServers: ["{{.ES_SERVER}}"]
-    insecureSkipVerify: true
-    defaultIndex: {{ .ES_INDEX }}
-    type: elastic
-
 jobs:
 {{ $normalLimit := mul .LIMITCOUNT .SCALE | int }}
 {{ range $index, $val := untilStep 1 (add $normalLimit 1|int) 1 }}
