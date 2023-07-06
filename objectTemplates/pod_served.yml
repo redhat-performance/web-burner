@@ -29,7 +29,5 @@ spec:
   selector:
     matchLabels:
      app: served-init-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
-  triggers:
-  - type: ConfigChange
   strategy:
     type: RollingUpdate 

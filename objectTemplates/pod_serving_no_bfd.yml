@@ -62,7 +62,5 @@ spec:
   selector:
     matchLabels:
      serving: true-{{ .Replica }}
-  triggers:
-  - type: ConfigChange
   strategy:
     type: RollingUpdate 

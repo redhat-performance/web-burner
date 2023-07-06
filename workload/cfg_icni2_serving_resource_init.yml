@@ -47,6 +47,8 @@ jobs:
     objects:
       - objectTemplate: {{ if contains .SRIOV "true" }} objectTemplates/sriov_network.yml {{ else }} objectTemplates/macvlan_network.yml {{ end }}
         replicas: 1
+        inputVars:
+          bridge: {{ .BRIDGE }}
 
   - name: create-serviceaccounts-job
     jobType: create

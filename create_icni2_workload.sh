@@ -9,7 +9,7 @@ export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
 export BFD=${BFD:-false}
 export SRIOV=${SRIOV:-true}
-export BRIDGE=${BRIDGE=:-breth0}
+export BRIDGE=${BRIDGE=:-br-ex}   # breth0 for kind.sh ovn-kubernetes clusters
 export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
 export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 #The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120

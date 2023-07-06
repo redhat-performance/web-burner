@@ -10,7 +10,7 @@ spec:
       "plugins": [
         {
           "type": "macvlan",
-          "master": "{{.BRIDGE}}",
+          "master": "{{.bridge}}",
           "mode": "bridge",
           "ipam": {
             "type": "static"
