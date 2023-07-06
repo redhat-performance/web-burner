@@ -8,12 +8,15 @@ export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
 export BFD=${BFD:-false}
+export SRIOV=${SRIOV:-true}       # set to false will create macvlan network attachment definitions instead
+export BRIDGE=${BRIDGE=:-br-ex}   # breth0 for kind.sh ovn-kubernetes clusters
 export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
 export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 #The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
 export LIMITCOUNT=${LIMITCOUNT:-35} 
-
+export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
 export vf_serving_factor=140
+
 num_vfs=$(( SCALE*vf_serving_factor))
 lb_count=$(((num_vfs+63)/64)) #round up
 if [[ $lb_count -lt 4 ]] ; then # minimum 4 lb nodes
@@ -28,8 +31,7 @@ if [ $? -ne 0 ]; then
     sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
 fi
 
-export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
-oc create secret generic kubeconfig --from-file=config=/home/kni/clusterconfigs/auth/kubeconfig --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
+oc create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 
 if [ $# -eq 0 ]; then
     echo "Pass kube-burner config"
