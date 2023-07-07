@@ -1,20 +1,16 @@
 ---
  
 global:
-  writeToFile: true
-  metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
-      esIndex: {{ .ES_INDEX }}
   indexerConfig:
-    enabled: {{ .INDEXING }}
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
     type: elastic
 
 jobs:
-{{ range $index, $val := sequence 1 33 }}
+{{ range $index, $val := untilStep 1 34 1 }}
   - name: service-job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -26,7 +22,6 @@ jobs:
     podWait: false
     preLoadImages: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -36,7 +31,7 @@ jobs:
         replicas: 1
 {{ end }}
 
-{{ range $index, $val := sequence 1 33}}
+{{ range $index, $val := untilStep 1 34 1 }}
   - name: normal-job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -48,7 +43,6 @@ jobs:
     podWait: false
     preLoadImages: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: true
     jobIterationDelay: 0s
@@ -58,7 +52,7 @@ jobs:
         replicas: 60
 {{ end }}
 
-{{ range $index, $val := sequence 1 35 }}
+{{ range $index, $val := untilStep 1 36 1 }}
   - name: service-job-2-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -70,7 +64,6 @@ jobs:
     podWait: false
     preLoadImages: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -82,7 +75,7 @@ jobs:
           ns: {{ $val }}
 {{ end }}
 
-{{ range $index, $val := sequence 1 34 }}
+{{ range $index, $val := untilStep 1 35 1 }}
   - name: served-job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -94,7 +87,6 @@ jobs:
     podWait: false
     preLoadImages: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -117,7 +109,6 @@ jobs:
     podWait: false
     preLoadImages: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s

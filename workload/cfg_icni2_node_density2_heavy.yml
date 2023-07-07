@@ -1,24 +1,21 @@
 global:
-  writeToFile: true
-  metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
-      esIndex: {{ .ES_INDEX }}
   indexerConfig:
-    enabled: {{ .INDEXING }}
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
     type: elastic
 
 jobs:
-{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
-{{ range $index, $val := sequence 1 $servedLimit }}
+{{ $servedLimit := mul .LIMITCOUNT .SCALE | int }}
+{{ range $val := untilStep 1 (add $servedLimit 1|int) 1 }}
+
   - name: kubelet-density-heavy-{{ $val }}
     jobIterations: 1
     jobType: create
-    qps: 20
-    burst: 20
+    qps: {{ $.QPS }}
+    burst: {{ $.BURST }}
     namespacedIterations: false
     namespace: served-ns-{{ $val }}
     waitWhenFinished: true
@@ -26,6 +23,7 @@ jobs:
     verifyObjects: true
     errorOnVerify: false
     podWait: false
+    preLoadImages: false
     objects:
 
       - objectTemplate: objectTemplates/postgres-deployment.yml

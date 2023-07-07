@@ -1,18 +1,8 @@
 ---
- 
-global:
-  writeToFile: false
-  metricsDirectory: collected-metrics
-  indexerConfig:
-    enabled: false
-    esServers: ["{{.ES_SERVER}}"]
-    insecureSkipVerify: true
-    defaultIndex: {{ .ES_INDEX }}
-    type: elastic
 
 jobs:
-{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
-{{ range $index, $val := sequence 1 $normalLimit }}
+{{ $normalLimit := mul .LIMITCOUNT .SCALE | int }}
+{{ range $index, $val := untilStep 1 (add $normalLimit 1|int) 1 }}
   - name: delete-service-job-{{ $val }}
     jobType: delete
     qps: {{ $.QPS }}

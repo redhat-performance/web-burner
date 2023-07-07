@@ -23,13 +23,11 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: worker-spk
+              - key: node-role.kubernetes.io/worker-spk
                 operator: DoesNotExist
   replicas: 1
   selector:
     matchLabels:
      app: served-init-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
-  triggers:
-  - type: ConfigChange
   strategy:
     type: RollingUpdate 

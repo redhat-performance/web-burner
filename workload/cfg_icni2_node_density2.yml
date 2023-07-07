@@ -1,21 +1,17 @@
 ---
  
 global:
-  writeToFile: true
-  metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
-      esIndex: {{ .ES_INDEX }}
   indexerConfig:
-    enabled: {{ .INDEXING }}
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
     type: elastic
 
 jobs:
-{{ $normalLimit := multiply .LIMITCOUNT .SCALE }}
-{{ range $index, $val := sequence 1 $normalLimit }}
+{{ $normalLimit := mul .LIMITCOUNT .SCALE | int }}
+{{ range $val := untilStep 1 (add $normalLimit 1|int) 1 }}
   - name: normal-service-job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -26,7 +22,6 @@ jobs:
     namespace: served-ns-{{ $val }}
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -37,7 +32,7 @@ jobs:
         replicas: 1
 {{ end }}
 
-{{ range $index, $val := sequence 1 $normalLimit}}
+{{ range $index, $val := untilStep 1 (add $normalLimit 1|int) 1 }}
   - name: normal-job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -46,9 +41,8 @@ jobs:
     namespacedIterations: false
     cleanup: false
     namespace: served-ns-{{ $val }}
-    podWait: false
+    podWait: true
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: true
     jobIterationDelay: 0s
@@ -57,10 +51,13 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 60
+        waitOptions:
+          forCondition: "Ready"
+
 {{ end }}
 
-{{ $servedLimit := multiply .LIMITCOUNT .SCALE }}
-{{ range $index, $val := sequence 1 $servedLimit }}
+{{ $servedLimit := mul .LIMITCOUNT .SCALE | int }}
+{{ range $index, $val := untilStep 1 (add $servedLimit 1|int) 1 }}
   - name: served-service-job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -71,7 +68,6 @@ jobs:
     namespace: served-ns-{{ $val }}
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -82,8 +78,8 @@ jobs:
         replicas: 1
 {{ end }}
 
-{{ $lastLimit := add $servedLimit -1 }}
-{{ range $index, $val := sequence 1 $lastLimit }}
+{{ $lastLimit := add $servedLimit -1 | int }}
+{{ range $index, $val := untilStep 1 (add $lastLimit 1|int) 1 }}
   - name: served-job-{{ $val }}
     jobType: create
     jobIterations: 1
@@ -92,9 +88,8 @@ jobs:
     namespacedIterations: false
     cleanup: false
     namespace: served-ns-{{ $val }}
-    podWait: false
+    podWait: true
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -103,6 +98,8 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 3
+        waitOptions:
+          forCondition: Ready
 {{ end }}
 
 
@@ -114,9 +111,8 @@ jobs:
     namespacedIterations: false
     cleanup: false
     namespace: served-ns-{{ $servedLimit }}
-    podWait: false
+    podWait: true
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -125,4 +121,5 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 3
-
+        waitOptions:
+          forCondition: Ready

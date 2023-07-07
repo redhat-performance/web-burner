@@ -1,12 +1,8 @@
 ---
 global:
-  writeToFile: true
-  metricsDirectory: collected-metrics
   measurements:
     - name: podLatency
-      esIndex: {{ .ES_INDEX }}
   indexerConfig:
-    enabled: {{ .INDEXING }}
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
@@ -16,7 +12,7 @@ jobs:
        
   - name: init-job
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -24,7 +20,6 @@ jobs:
     namespace: serving-ns
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Pod"]
     verifyObjects: true
     errorOnVerify: true
     jobIterationDelay: 0s
@@ -36,27 +31,28 @@ jobs:
 
   - name: create-networks-job
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 10
     burst: 10
-    namespacedIterations: false
+    namespacedIterations: {{ if contains .SRIOV "true" }} false {{ else }} true {{ end }}
     cleanup: false
-    namespace: openshift-sriov-network-operator
+    namespace: {{ if contains .SRIOV "true" }} openshift-sriov-network-operator {{ else }} serving-ns {{ end }}
     podWait: false
     waitWhenFinished: false
-    waitFor: ["net-attach-def"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 1s
     jobPause: 0s
     preLoadImages: false
     objects:
-      - objectTemplate: objectTemplates/sriov_network.yml
+      - objectTemplate: {{ if contains .SRIOV "true" }} objectTemplates/sriov_network.yml {{ else }} objectTemplates/macvlan_network.yml {{ end }}
         replicas: 1
+        inputVars:
+          bridge: {{ .BRIDGE }}
 
   - name: create-serviceaccounts-job
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -64,7 +60,6 @@ jobs:
     namespace: serving-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["ServiceAccount"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 1s
@@ -92,11 +87,10 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/permissionsClusterRole.yml
         replicas: 1
-        namespaced: false
 
   - name: create-clusterbindings-jobs
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -104,7 +98,6 @@ jobs:
     namespace: serving-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["ClusterRoleBinding"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 1s
@@ -113,11 +106,10 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/permissionsClusterRoleBinding.yml
         replicas: 1
-        namespaced: false
 
   - name: create-cms-job
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -125,7 +117,6 @@ jobs:
     namespace: serving-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["configMap"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 1s
@@ -137,7 +128,7 @@ jobs:
 
   - name: create-secrets-job
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -145,7 +136,6 @@ jobs:
     namespace: serving-ns
     podWait: false
     waitWhenFinished: false
-    waitFor: ["Secret"]
     verifyObjects: true
     errorOnVerify: false
     jobIterationDelay: 0s
@@ -157,7 +147,7 @@ jobs:
 
   - name: init-served-job
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -165,7 +155,6 @@ jobs:
     namespace: served-ns
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Deployment"]
     verifyObjects: true
     errorOnVerify: true
     jobIterationDelay: 0s
@@ -177,7 +166,7 @@ jobs:
 
   - name: serving-job
     jobType: create
-    jobIterations: {{ multiply .LIMITCOUNT .SCALE }}
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
     qps: 20
     burst: 20
     namespacedIterations: true
@@ -185,7 +174,6 @@ jobs:
     namespace: serving-ns
     podWait: false
     waitWhenFinished: true
-    waitFor: ["Deployment"]
     verifyObjects: true
     errorOnVerify: true
     jobIterationDelay: 0s
@@ -194,4 +182,3 @@ jobs:
     objects:
       - objectTemplate: {{ if contains .BFD "true" }} objectTemplates/pod_serving.yml {{ else }} objectTemplates/pod_serving_no_bfd.yml {{ end }}
         replicas: 4
-
