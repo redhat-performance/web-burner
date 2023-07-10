@@ -28,8 +28,8 @@ if [ $# -eq 0 ]; then
 fi
 
 echo "Set Openshift monitoring vars.."
-prometheus_url=$(oc get routes -n openshift-monitoring prometheus-k8s --no-headers | awk '{print $2}')
-token=$(oc sa get-token -n openshift-monitoring prometheus-k8s)
+prometheus_url=$(kubectl get routes -n openshift-monitoring prometheus-k8s --no-headers | awk '{print $2}')
+token=$(kubectl create token -n openshift-monitoring prometheus-k8s --duration=6h)
 
 echo "Lets Delete ICNI2 workloads.."
 kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml 
