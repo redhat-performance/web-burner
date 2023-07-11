@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # ovn-kubernetes
+      ENABLE_MULTI_NET: "true"    
+      KIND_INSTALL_INGRESS: "false"
+      KIND_INSTALL_METALLB: "false"
+      KIND_INSTALL_PLUGINS: "true"      
+      KIND_IPV4_SUPPORT: "true"
+      KIND_IPV6_SUPPORT: "false"
+      KUBECONFIG: "/home/runner/ovn.conf"
+      OVN_DISABLE_SNAT_MULTIPLE_GWS: "true" 
+      OVN_GATEWAY_MODE: "shared"
+      OVN_HYBRID_OVERLAY_ENABLE: "false"
+      # web-burner
+      BFD: "false"
+      BRIDGE: "breth0"
+      BURST: "20"
+      ES_SERVER: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com"
+      ES_INDEX: "ripsaw-kube-burner"
+      INDEXING: "false"
+      KUBE_BURNER_RELEASE: "1.7.2"
+      LIMITCOUNT: "1" 
+      QPS: "20"
+      SCALE: "1"
+      SRIOV: "false"
+
+    steps:      
+      - uses: actions/checkout@v3
+        with:
+          repository: 'ovn-org/ovn-kubernetes'
+          
+      - name: Free up disk space
+        run: sudo eatmydata apt-get remove --auto-remove -y aspnetcore-* dotnet-* libmono-* mono-* msbuild php-* php7* ghc-* zulu-*
+        
+      - name: Disable ufw
+        # For IPv6 and Dualstack, ufw (Uncomplicated Firewall) should be disabled.
+        # Not needed for KIND deployments, so just disable all the time.
+        run: |
+          sudo ufw disable
+
+      - name: kind setup
+        timeout-minutes: 30
+        run: |
+          make -C test install-kind
+          kubectl get po -A
+          
+      - name: kube-burner setup
+        run: |
+          wget -O kube-burner.tar.gz https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-V${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz
+          sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
+          kube-burner version  
+
+      - uses: actions/checkout@v3
+
+      - name: create secret from kubeconfig
+        run: |
+          kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
+
+      - name: label worker-lb node
+        # ovn-worker for lbs/serving pods and ovn-worker2 for apps/served pods
+        run: |
+          kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrite=true
+          kubectl get nodes --show-labels
+          
+      - name: create lb/serving pods
+        run: |
+          kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
+          kubectl get po -A
+          
+      - name: create node-density app/served pods
+        run: |
+          echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
+          kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
+          echo "Number of serving running pods (expect 4):"
+          kubectl get po -A | grep serving | grep Running | wc -l
+          echo "Number of served running pods (expect 61):"
+          kubectl get po -A | grep served | grep Running | wc -l
+          echo "Number of serving deployments (expect 4):"
+          kubectl get deploy -A | grep serving | wc -l
+          echo "Number of served deployments (expect 1):"
+          kubectl get deploy -A | grep served | wc -l
+          echo "Number of served services (expect 1):"
+          kubectl get service -A | grep served | wc -l
