@@ -64,8 +64,6 @@ jobs:
           kube-burner version  
 
       - uses: actions/checkout@v3
-        with:
-          ref: kbv16
 
       - name: create secret from kubeconfig
         run: |
