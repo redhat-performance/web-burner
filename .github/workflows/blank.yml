@@ -84,4 +84,13 @@ jobs:
         run: |
           echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
           kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
-          kubectl get po -A
+          echo "Number of serving running pods (expect 4):"
+          kubectl get po -A | grep serving | grep Running | wc -l
+          echo "Number of served running pods (expect 61):"
+          kubectl get po -A | grep served | grep Running | wc -l
+          echo "Number of serving deployments (expect 4):"
+          kubectl get deploy -A | grep serving | wc -l
+          echo "Number of served deployments (expect 1):"
+          kubectl get deploy -A | grep served | wc -l
+          echo "Number of served services (expect 1):"
+          kubectl get service -A | grep served | wc -l
