@@ -325,7 +325,7 @@ $ kubectl get po -A | grep serving | grep Running | wc -l
 4
 
 $ kubectl get po -A | grep served | grep Running | wc -l
-60
+61
 ```
 
 ### Run locally on OpenShift Local
