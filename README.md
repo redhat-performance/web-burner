@@ -335,5 +335,3 @@ OpenShift Local (formally CRC) does not yet support ovn-kubernetes as CNI (see [
 ### Run through Arcaflow
 
 [arcaflow-plugin-kube-burner](https://github.com/redhat-performance/arcaflow-plugin-kube-burner) needs to support some additional variables (see [arcaflow-plugin-kube-burner#5](https://github.com/redhat-performance/arcaflow-plugin-kube-burner/issues/5)).
-
-test
