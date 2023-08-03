@@ -198,7 +198,6 @@ time="2023-07-11 09:06:56" level=info msg="👋 Exiting kube-burner 1234" file="
 Check the newly created pods:
 ```
 $ kubectl get po -A | grep serv
-kube-system          kube-apiserver-ovn-control-plane                       1/1     Running   0               9m38s
 served-ns-0          dep-served-init-0-1-init-served-job-768bd7d854-m2s6h   1/1     Running   0               84s
 serving-ns-0         dep-serving-0-1-serving-job-5f97f469dc-7wczm           2/2     Running   0               77s
 serving-ns-0         dep-serving-0-2-serving-job-7567c7748-f5nxs            2/2     Running   0               77s
