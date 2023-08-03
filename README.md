@@ -334,7 +334,6 @@ Let's assume AWS OCP IPI installed cluster with ovn-networking:
 ```
 $ kubectl get node
 NAME                                         STATUS   ROLES               AGE   VERSION
-ip-10-0-122-165.us-west-2.compute.internal   Ready    workload            21h   v1.23.3+e419edf
 ip-10-0-150-202.us-west-2.compute.internal   Ready    worker              21h   v1.23.3+e419edf
 ip-10-0-156-247.us-west-2.compute.internal   Ready    master              21h   v1.23.3+e419edf
 ip-10-0-190-123.us-west-2.compute.internal   Ready    worker              21h   v1.23.3+e419edf
