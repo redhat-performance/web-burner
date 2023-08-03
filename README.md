@@ -328,7 +328,7 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 61
 ```
 
-### Run on a AWS OCP cluster
+### Run on an AWS OCP cluster
 
 Let's assume AWS OCP IPI installed cluster with ovn-networking:
 ```
