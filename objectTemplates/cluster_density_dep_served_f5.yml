@@ -14,13 +14,6 @@ spec:
       - name: sleep-1
         imagePullPolicy: IfNotPresent
         image: gcr.io/google_containers/pause-amd64:3.0
-        resources:
-          request:
-            memory: '100Mi'
-            cpu: 100m
-          limit:
-            memory: '100Mi'
-            cpu: 100m
       - name: f5-f5-served-ns-{{ .ns }}-{{ .Replica }}
         imagePullPolicy: IfNotPresent
         image: rhscl/httpd-24-rhel7:latest
