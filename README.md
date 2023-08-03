@@ -178,7 +178,7 @@ OS/Arch: linux amd64
 
 Create the load balancing/serving resources (took 2m):
 ```
-kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
+$ kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
 time="2023-07-11 09:05:38" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
 time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
 time="2023-07-11 09:05:41" level=info msg="📈 Creating measurement factory" file="factory.go:51"
@@ -382,7 +382,7 @@ OS/Arch: linux amd64
 
 Create the load balancing/serving resources:
 ```
-kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
+$ kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
 time="2023-07-11 09:05:38" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
 time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
 time="2023-07-11 09:05:41" level=info msg="📈 Creating measurement factory" file="factory.go:51"
