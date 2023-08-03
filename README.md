@@ -330,7 +330,7 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 
 ### Run on an AWS OCP cluster
 
-Let's assume AWS OCP IPI installed cluster with ovn-networking:
+Let's assume an AWS OCP cluster with ovn-networking:
 ```
 $ kubectl get node
 NAME                                         STATUS   ROLES               AGE   VERSION
