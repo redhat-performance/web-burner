@@ -328,6 +328,179 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 61
 ```
 
+### Run on a AWS OCP cluster
+
+Let's assume AWS OCP IPI installed cluster with ovn-networking:
+```
+$ kubectl get node
+NAME                                         STATUS   ROLES               AGE   VERSION
+ip-10-0-122-165.us-west-2.compute.internal   Ready    workload            21h   v1.23.3+e419edf
+ip-10-0-150-202.us-west-2.compute.internal   Ready    worker              21h   v1.23.3+e419edf
+ip-10-0-156-247.us-west-2.compute.internal   Ready    master              21h   v1.23.3+e419edf
+ip-10-0-190-123.us-west-2.compute.internal   Ready    worker              21h   v1.23.3+e419edf
+```
+
+Label one of the worker nodes for hosting the load balancers:
+```
+$ kubectl label node ip-10-0-150-202.us-west-2.compute.internal  node-role.kubernetes.io/worker-spk="" --overwrite=true
+node/ovn-worker labeled
+```
+
+Clone the web-burner repository:
+```
+$ git clone https://github.com/redhat-performance/web-burner.git
+$ cd web-burner
+```
+
+Create a secret from the KUBECONFIG:
+```
+$ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
+```
+
+Export the following variables:
+```
+$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
+$ export QPS=${QPS:-20}
+$ export BURST=${BURST:-20}
+$ export SCALE=${SCALE:-1}
+$ export BFD=${BFD:-false}
+$ export SRIOV=false
+$ export BRIDGE=${BRIDGE:-br-ex}
+$ export LIMITCOUNT=1
+$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
+```
+
+Make sure kube-burner is installed in the appropiate version:
+```
+$ kube-burner version
+Version: 1.7.2
+Git Commit: 910b28640fb28fbee93c923caf43e52ea4895fae
+Build Date: 2023-07-04T14:45:38Z
+Go Version: go1.19.10
+OS/Arch: linux amd64
+```
+
+Create the load balancing/serving resources:
+```
+kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
+time="2023-07-11 09:05:38" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
+time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
+time="2023-07-11 09:05:41" level=info msg="📈 Creating measurement factory" file="factory.go:51"
+time="2023-07-11 09:05:41" level=info msg="Registered measurement: podLatency" file="factory.go:83"
+time="2023-07-11 09:05:41" level=info msg="Job init-job: 1 iterations with 1 ConfigMap replicas" file="create.go:87"
+...
+time="2023-07-11 09:06:54" level=info msg="serving-job: Initialized 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:06:54" level=info msg="serving-job: Ready 50th: 50358 99th: 54357 max: 54357 avg: 51857" file="pod_latency.go:168"
+time="2023-07-11 09:06:54" level=info msg="serving-job: PodScheduled 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:06:54" level=info msg="serving-job: ContainersReady 50th: 50358 99th: 54357 max: 54357 avg: 51857" file="pod_latency.go:168"
+...
+time="2023-07-11 09:06:56" level=info msg="Indexing finished in 409ms: created=1" file="metadata.go:61"
+time="2023-07-11 09:06:56" level=info msg="Finished execution with UUID: 1234" file="job.go:193"
+time="2023-07-11 09:06:56" level=info msg="👋 Exiting kube-burner 1234" file="kube-burner.go:96"
+```
+
+Check the newly created lb pods:
+```
+$ kubectl get po -n serving-ns-0
+NAME                                           READY   STATUS    RESTARTS   AGE
+dep-serving-0-1-serving-job-5ccd8c9d86-n7lwt   2/2     Running   0          16m
+dep-serving-0-2-serving-job-5bc5476d45-l6lhd   2/2     Running   0          16m
+dep-serving-0-3-serving-job-7645fb549f-tqtlf   2/2     Running   0          16m
+dep-serving-0-4-serving-job-7769dccf77-dxjpf   2/2     Running   0          16m
+```
+
+Check the macvlan network attachment definition:
+```
+$ kubectl get net-attach-def -n serving-ns-0
+NAME          AGE
+sriov-net-0   17m
+ 
+$ kubectl describe net-attach-def -n serving-ns-0
+Name:         sriov-net-0                                                                                                                                                                                         
+Namespace:    serving-ns-0                                                                              
+Labels:       kube-burner-index=0          
+              kube-burner-job=create-networks-job
+              kube-burner-uuid=1234                                                                     
+Annotations:  <none>                     
+API Version:  k8s.cni.cncf.io/v1    
+Kind:         NetworkAttachmentDefinition                                                               
+Metadata:                       
+  Creation Timestamp:  2023-08-03T08:16:31Z
+  Generation:          1                 
+  Managed Fields:             
+    API Version:  k8s.cni.cncf.io/v1                                                                    
+    Fields Type:  FieldsV1    
+    fieldsV1:                            
+      f:metadata:               
+        f:labels:                                                                                       
+          .:                             
+          f:kube-burner-index:  
+          f:kube-burner-job:                                                                            
+          f:kube-burner-uuid:            
+      f:spec:                                                                                           
+        .:                                                                                              
+        f:config:                                                                                       
+    Manager:         kube-burner                                                                                                                                                                                
+    Operation:       Update                                                                                                                                                                                     
+    Time:            2023-08-03T08:16:31Z
+  Resource Version:  395173
+  UID:               37e11ee8-5074-48c7-bdad-9a5821f042c6                                                                                                                                                       
+Spec:                   
+  Config:  {            
+  "cniVersion": "0.3.1",                                                                                                                                                                                        
+  "name": "internal-net",
+  "plugins": [          
+    {                   
+      "type": "macvlan",
+      "master": "br-ex",                                                                                                                                                                                        
+      "mode": "bridge",
+      "ipam": {        
+        "type": "static"
+      }                                                                                                                                                                                                         
+    },                
+    {                 
+      "capabilities": {                                                                                                                                                                                         
+        "mac": true,
+        "ips": true
+      },
+      "type": "tuning"
+    }
+  ]
+}
+Events:  <none>
+```
+
+Create the served/application pods:
+```
+$ kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
+time="2023-07-11 09:09:58" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
+time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
+time="2023-07-11 09:10:01" level=info msg="📈 Creating measurement factory" file="factory.go:51"
+time="2023-07-11 09:10:01" level=info msg="Registered measurement: podLatency" file="factory.go:83"
+time="2023-07-11 09:10:01" level=info msg="Job normal-service-job-1: 1 iterations with 1 Service replicas" file="create.go:87"
+...
+time="2023-07-11 09:14:08" level=info msg="Indexing finished in 4.457s: created=60" file="pod_latency.go:193"
+time="2023-07-11 09:14:09" level=info msg="Indexing finished in 1.12s: created=4" file="pod_latency.go:193"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: Initialized 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: Ready 50th: 207326 99th: 233786 max: 233786 avg: 169819" file="pod_latency.go:168"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: PodScheduled 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: ContainersReady 50th: 207326 99th: 233786 max: 233786 avg: 169819" file="pod_latency.go:168"
+...
+time="2023-07-11 09:14:10" level=info msg="Indexing finished in 236ms: created=1" file="metadata.go:61"
+time="2023-07-11 09:14:10" level=info msg="Finished execution with UUID: 1235" file="job.go:193"
+time="2023-07-11 09:14:10" level=info msg="👋 Exiting kube-burner 1235" file="kube-burner.go:96"
+```
+
+Check the object counts:
+```
+$ kubectl get po -A | grep serving | grep Running | wc -l
+4
+
+$ kubectl get po -A | grep served | grep Running | wc -l
+61
+```
+
 ### Run locally on OpenShift Local
 
 OpenShift Local (formally CRC) does not yet support ovn-kubernetes as CNI (see [crc#2294](https://github.com/crc-org/crc/issues/2294)).
