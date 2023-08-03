@@ -342,7 +342,7 @@ ip-10-0-190-123.us-west-2.compute.internal   Ready    worker              21h   
 Label one of the worker nodes for hosting the load balancers:
 ```
 $ kubectl label node ip-10-0-150-202.us-west-2.compute.internal  node-role.kubernetes.io/worker-spk="" --overwrite=true
-node/ovn-worker labeled
+node/ip-10-0-150-202.us-west-2.compute.internal labeled
 ```
 
 Clone the web-burner repository:
