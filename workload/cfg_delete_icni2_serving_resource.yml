@@ -15,9 +15,11 @@ jobs:
         kind: Deployment
         labelSelector: {kube-burner-job: serving-job}
 
+      {{ if contains .SRIOV "true" }}
       - apiVersion: sriovnetwork.openshift.io/v1
         kind: SriovNetwork
         labelSelector: {kube-burner-job: create-networks-job}
+      {{ end }}
 
       - apiVersion: v1
         kind: Configmap
