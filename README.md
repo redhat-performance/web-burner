@@ -505,4 +505,11 @@ OpenShift Local (formally CRC) does not yet support ovn-kubernetes as CNI (see [
 
 ### Run through Arcaflow
 
-[arcaflow-plugin-kube-burner](https://github.com/redhat-performance/arcaflow-plugin-kube-burner) needs to support some additional variables (see [arcaflow-plugin-kube-burner#5](https://github.com/redhat-performance/arcaflow-plugin-kube-burner/issues/5)).
+[arcaflow-plugin-kube-burner](https://github.com/redhat-performance/arcaflow-plugin-kube-burner) can be used to run the web-burner workload in containers.
+
+1. Clone [the arcaflow kube-burner repository](https://github.com/redhat-performance/arcaflow-plugin-kube-burner)
+2. cd arcaflow-plugin-kube-burner
+3. Copy and Paste the openshift/kubernetes cluster's kubeconfig file content into the configs/webburner_input.yaml and configs/webburner_cleanup.yaml files.
+4. Create the container with `docker build -t arca-web-burner .`
+5. To run a web-burner workload `cat configs/webburner_input.yaml | docker run -i arca-web-burner -s run-web-burner --debug -f -`
+6. To delete a web-burner workload `cat configs/webburner_input.yaml | docker run -i arca-kube-burner -s delete-web-burner --debug -f -`  
