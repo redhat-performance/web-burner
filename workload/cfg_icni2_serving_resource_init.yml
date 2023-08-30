@@ -107,6 +107,25 @@ jobs:
       - objectTemplate: objectTemplates/permissionsClusterRoleBinding.yml
         replicas: 1
 
+  - name: create-rolebindings-jobs
+    jobType: create
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    cleanup: false
+    namespace: serving-ns
+    podWait: false
+    waitWhenFinished: false
+    verifyObjects: true
+    errorOnVerify: false
+    jobIterationDelay: 1s
+    jobPause: 0s
+    preLoadImages: false
+    objects:
+      - objectTemplate: objectTemplates/permissionsRoleBinding.yml
+        replicas: 1
+
   - name: create-cms-job
     jobType: create
     jobIterations: {{ mul .LIMITCOUNT .SCALE }}
