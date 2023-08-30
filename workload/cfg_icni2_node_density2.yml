@@ -19,7 +19,7 @@ jobs:
     burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: served-ns-{{ $val }}
+    namespace: served-ns-{{ (sub $val 1|int) }}
     podWait: false
     waitWhenFinished: false
     verifyObjects: true
@@ -40,7 +40,7 @@ jobs:
     burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: served-ns-{{ $val }}
+    namespace: served-ns-{{ (sub $val 1|int) }}
     podWait: true
     waitWhenFinished: true
     verifyObjects: true
@@ -65,7 +65,7 @@ jobs:
     burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: served-ns-{{ $val }}
+    namespace: served-ns-{{ (sub $val 1|int) }}
     podWait: false
     waitWhenFinished: false
     verifyObjects: true
@@ -87,7 +87,7 @@ jobs:
     burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: served-ns-{{ $val }}
+    namespace: served-ns-{{ (sub $val 1|int) }}
     podWait: true
     waitWhenFinished: true
     verifyObjects: true
@@ -110,7 +110,7 @@ jobs:
     burst: {{ .BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: served-ns-{{ $servedLimit }}
+    namespace: served-ns-{{ (sub $servedLimit 1|int) }}
     podWait: true
     waitWhenFinished: true
     verifyObjects: true

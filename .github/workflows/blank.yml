@@ -80,7 +80,7 @@ jobs:
         # ovn-worker for lbs/serving pods and ovn-worker2 for apps/served pods
         run: |
           kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrite=true
-          kubectl get nodes --show-labels
+          kubectl get nodes
           
       - name: create lb/serving pods
         run: |
@@ -91,6 +91,7 @@ jobs:
         run: |
           echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
           kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
+          kubectl get ns
           echo "Number of serving running pods (expect 4):"
           kubectl get po -A | grep serving | grep Running | wc -l
           echo "Number of served running pods (expect 61):"
