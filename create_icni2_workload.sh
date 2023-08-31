@@ -91,7 +91,7 @@ fi
 
 echo "Set Openshift monitoring vars.."
 prometheus_url=$(kubectl get routes -n openshift-monitoring prometheus-k8s --no-headers | awk '{print $2}')
-token=$(kubectl create token -n openshift-monitoring prometheus-k8s --duration=6h)
+token=$(kubectl create token -n openshift-monitoring prometheus-k8s --duration=6h || oc sa new-token -n openshift-monitoring prometheus-k8s)
 
 popd
 
