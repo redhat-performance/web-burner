@@ -93,12 +93,21 @@ jobs:
           kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
           kubectl get ns
           echo "Number of serving running pods (expect 4):"
-          kubectl get po -A | grep serving | grep Running | wc -l
+          SERVING_PODS=$(kubectl get po -A | grep serving | grep Running | wc -l)
+          echo $SERVING_PODS
           echo "Number of served running pods (expect 61):"
-          kubectl get po -A | grep served | grep Running | wc -l
+          SERVED_PODS=$(kubectl get po -A | grep served | grep Running | wc -l)
+          echo $SERVED_PODS
           echo "Number of serving deployments (expect 4):"
-          kubectl get deploy -A | grep serving | wc -l
+          SERVING_DEPLOYS=$(kubectl get deploy -A | grep serving | wc -l)
+          echo $SERVING_DEPLOYS
           echo "Number of served deployments (expect 1):"
-          kubectl get deploy -A | grep served | wc -l
+          SERVED_DEPLOYS=$(kubectl get deploy -A | grep served | wc -l)
+          echo $SERVED_DEPLOYS
           echo "Number of served services (expect 1):"
-          kubectl get service -A | grep served | wc -l
+          SERVED_SVCS=$(kubectl get service -A | grep served | wc -l)
+          echo $SERVED_SVCS
+          if [ $SERVING_PODS != 4 ] || [ $SERVED_PODS != 61 ] || [ $SERVING_DEPLOYS != 4 ] || [ $SERVED_DEPLOYS != 1 ] || [ $SERVED_SVCS != 1 ]  ; then
+             echo "Incorrect number of objects"
+             exit 1
+          fi
