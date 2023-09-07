@@ -107,7 +107,7 @@ jobs:
           echo "Number of served services (expect 1):"
           SERVED_SVCS=$(kubectl get service -A | grep served | wc -l)
           echo $SERVED_SVCS
-          if [ $SERVING_PODS != 4 ] || [ $SERVED_PODS != 60 ] || [ $SERVING_DEPLOYS != 4 ] || [ $SERVED_DEPLOYS != 1 ] || [ $SERVED_SVCS != 1 ]  ; then
+          if [ $SERVING_PODS != 4 ] || [ $SERVED_PODS != 61 ] || [ $SERVING_DEPLOYS != 4 ] || [ $SERVED_DEPLOYS != 1 ] || [ $SERVED_SVCS != 1 ]  ; then
              echo "Incorrect number of objects"
              exit 1
           fi
