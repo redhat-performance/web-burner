@@ -89,11 +89,13 @@ jobs:
           kubectl get node -o wide
           
       - name: create lb/serving pods
+        timeout-minutes: 10
         run: |
           kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
           kubectl get po -A
           
       - name: create node-density app/served pods
+        timeout-minutes: 10
         run: |
           echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
           kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
