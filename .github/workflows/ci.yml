@@ -31,7 +31,7 @@ jobs:
       OVN_GATEWAY_MODE: "shared"
       OVN_HYBRID_OVERLAY_ENABLE: "false"
       # web-burner
-      BFD: "false"
+      BFD: "true"
       BRIDGE: "breth0"
       BURST: "20"
       ES_SERVER: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com"
