@@ -102,7 +102,6 @@ Let's take a look at the options:
 
 After some minutes (took 4m), we will have a three node cluster ready for use:
 ```
-$ cd
 $ export KUBECONFIG=$HOME/ovn.conf
 $ kubectl get node
 NAME                STATUS   ROLES           AGE    VERSION
