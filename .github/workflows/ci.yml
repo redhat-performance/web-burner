@@ -61,7 +61,8 @@ jobs:
       - name: docker setup
         run: |
           echo '{"bip":"172.17.0.1/16","default-address-pools":[{"base":"192.168.216.0/21","size":21},{"base":"172.17.0.0/12","size":16}]}' | sudo tee /etc/docker/daemon.json
-          sudo systemctl reload docker
+          docker network prune
+          sudo systemctl restart docker
 
       - name: kind setup
         timeout-minutes: 30
