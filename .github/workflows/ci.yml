@@ -58,19 +58,19 @@ jobs:
         run: |
           sudo ufw disable
 
-      - name: docker setup
+      - name: Docker setup
         run: |
           echo '{"bip":"172.17.0.1/16","default-address-pools":[{"base":"192.168.216.0/21","size":21},{"base":"172.17.0.0/12","size":16}]}' | sudo tee /etc/docker/daemon.json
           docker network prune
           sudo systemctl restart docker
 
-      - name: kind setup
+      - name: Kind setup
         timeout-minutes: 30
         run: |
           make -C test install-kind
           kubectl get po -A
           
-      - name: kube-burner setup
+      - name: Kube-burner setup
         run: |
           wget -O kube-burner.tar.gz https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-V${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz
           sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
@@ -78,23 +78,23 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - name: create secret from kubeconfig
+      - name: Create secret from kubeconfig
         run: |
           kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 
-      - name: label worker-lb node
+      - name: Label worker-lb node
         # ovn-worker for lbs/serving pods and ovn-worker2 for apps/served pods
         run: |
           kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrite=true
           kubectl get node -o wide
           
-      - name: create lb/serving pods
-        timeout-minutes: 10
+      - name: Create lb/serving pods
+        timeout-minutes: 15
         run: |
-          kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
-          kubectl get po -A
+          kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout duration 10m
+          kubectl get po -A -o wide
           
-      - name: create node-density app/served pods
+      - name: Create node-density app/served pods
         timeout-minutes: 10
         run: |
           echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
