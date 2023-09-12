@@ -11,12 +11,13 @@
 		* Example: `./create_icni2_workload.sh workload/cfg_icni2_cluster_density2.yml 4 false`
 
 - Index
-  - [Run locally on a kind cluster disabling BFD](#run-locally-on-a-kind-cluster-disabling-bfd)
-  - [Run locally on a kind cluster enabling BFD](#run-locally-on-a-kind-cluster-enabling-bfd)
+  - [End Resources](#end-resources)
+  - [Run locally on a kind cluster](#run-locally-on-a-kind-cluster)
+    - [Without BFD](#without-bfd)
+    - [With BFD](#with-bfd)
   - [Run on an AWS OCP cluster](#run-on-an-aws-ocp-cluster)
   - [Run locally on OpenShift Local](#run-locally-on-openshift-local)
   - [Run through Arcaflow](#run-through-arcaflow)
-
 
 ## End Resources
 Kube-burner configs are templated to created vz equivalent workload on 120 node cluster.
@@ -94,7 +95,29 @@ Kube-burner configs are templated to created vz equivalent workload on 120 node 
 		└── 1 service with 60 normal pod endpoints on each namespace
 ```
 
-### Run locally on a kind cluster disabling BFD
+## Run locally on a kind cluster
+
+> For the BFD setup to work you need to configure `docker` to mimic the Scale Lab subnet setup. Configure your `/etc/docker/daemon.json` (rootful docker) or `$HOME/.config/docker/daemon.json` (rootless) as follows:
+> ```yaml
+> {
+>   "bip": "172.17.0.1/16",
+>   "default-address-pools":
+>   [
+>     {"base":"192.168.216.0/21","size":21},
+>     {
+>       "base" : "172.17.0.0/12",
+>       "size" : 16
+>     }
+>   ]
+> }
+> ```
+> 
+> Then restart the docker service:
+> ```
+> $ docker network prune
+> $ sudo systemctl restart docker            # for rootful docker
+> $ systemctl restart --user docker.service  # rootless
+> ```
 
 First create a local kind cluster with ONV-Kubernetes as CNI:
 ```
@@ -158,6 +181,8 @@ Create a secret from the KUBECONFIG:
 ```
 $ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 ```
+
+### Without BFD
 
 Export the following variables:
 ```
@@ -240,7 +265,7 @@ sh-4.4$ exit
 ```
 
 Check the macvlan network attachment definition:
-```
+```yaml
 $ kubectl get net-attach-def -n serving-ns-0
 NAME          AGE
 sriov-net-0   3m16s
@@ -335,70 +360,7 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 61
 ```
 
-### Run locally on a kind cluster enabling BFD
-
-First create a local kind cluster with ONV-Kubernetes as CNI:
-```
-$ git clone https://github.com/ovn-org/ovn-kubernetes.git
-$ cd ovn-kubernetes/contrib
-$ ./kind.sh --install-cni-plugins --disable-snat-multiple-gws --multi-network-enable
-```
-
-Let's take a look at the options:
- - `install-cni-plugins`: Installs additional CNI network plugins
- - `disable-snat-multiple-gws`: Disable SNAT for multiple gws
- - `multi-network-enable`: Installs [Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni) on the cluster
-
-After some minutes (took 4m), we will have a three node cluster ready for use:
-```
-$ export KUBECONFIG=$HOME/ovn.conf
-$ kubectl get node
-NAME                STATUS   ROLES           AGE    VERSION
-ovn-control-plane   Ready    control-plane   4h2m   v1.24.0
-ovn-worker          Ready    <none>          4h1m   v1.24.0
-ovn-worker2         Ready    <none>          4h1m   v1.24.0
-```
-
-Check all pods are running:
-```
-$ kubectl get po  -A
-NAMESPACE            NAME                                        READY   STATUS    RESTARTS        AGE
-kube-system          coredns-787d4945fb-9tmjx                    1/1     Running   0               4m6s
-kube-system          coredns-787d4945fb-mhtpg                    1/1     Running   0               4m6s
-kube-system          etcd-ovn-control-plane                      1/1     Running   0               4m19s
-kube-system          kube-apiserver-ovn-control-plane            1/1     Running   0               4m18s
-kube-system          kube-controller-manager-ovn-control-plane   1/1     Running   0               4m18s
-kube-system          kube-multus-ds-c2kfr                        1/1     Running   2 (3m2s ago)    3m14s
-kube-system          kube-multus-ds-fpt4v                        1/1     Running   2 (3m1s ago)    3m14s
-kube-system          kube-multus-ds-nvmm5                        1/1     Running   1 (2m59s ago)   3m14s
-kube-system          kube-scheduler-ovn-control-plane            1/1     Running   0               4m19s
-local-path-storage   local-path-provisioner-c8855d4bb-4p2lg      1/1     Running   0               4m6s
-ovn-kubernetes       ovnkube-db-79f68fcbc5-k6vww                 2/2     Running   0               3m15s
-ovn-kubernetes       ovnkube-master-55cd5bf96b-sx2kr             2/2     Running   0               3m15s
-ovn-kubernetes       ovnkube-node-klvbp                          3/3     Running   3 (2m42s ago)   3m15s
-ovn-kubernetes       ovnkube-node-qdrcd                          3/3     Running   3 (2m41s ago)   3m15s
-ovn-kubernetes       ovnkube-node-tsbf5                          3/3     Running   1 (2m57s ago)   3m15s
-ovn-kubernetes       ovs-node-m2jqx                              1/1     Running   0               3m15s
-ovn-kubernetes       ovs-node-s5drz                              1/1     Running   0               3m15s
-ovn-kubernetes       ovs-node-vbkrp                              1/1     Running   0               3m15s
-```
-
-Label one of the worker nodes for hosting the load balancers:
-```
-$ kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrite=true
-node/ovn-worker labeled
-```
-
-Clone the web-burner repository:
-```
-$ git clone https://github.com/redhat-performance/web-burner.git
-$ cd web-burner
-```
-
-Create a secret from the KUBECONFIG:
-```
-$ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
-```
+### With BFD
 
 Export the following variables:
 ```
@@ -604,7 +566,7 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 61
 ```
 
-### Run on an AWS OCP cluster
+## Run on an AWS OCP cluster
 
 Let's assume an AWS OCP cluster with ovn-networking:
 ```
@@ -639,6 +601,7 @@ $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
 $ export SCALE=${SCALE:-1}
 $ export BFD=${BFD:-false}
+$ export PROBE=false
 $ export SRIOV=false
 $ export BRIDGE=${BRIDGE:-br-ex}
 $ export LIMITCOUNT=1
@@ -776,11 +739,11 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 61
 ```
 
-### Run locally on OpenShift Local
+## Run locally on OpenShift Local
 
 OpenShift Local (formally CRC) does not yet support ovn-kubernetes as CNI (see [crc#2294](https://github.com/crc-org/crc/issues/2294)).
 
-### Run through Arcaflow
+## Run through Arcaflow
 
 [arcaflow-plugin-kube-burner](https://github.com/redhat-performance/arcaflow-plugin-kube-burner) can be used to run the web-burner workload in containers.
 
