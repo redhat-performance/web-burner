@@ -102,6 +102,7 @@ jobs:
           echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
           kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
           kubectl get ns
+          kubectl get po -n served-ns-0 -o wide | head
           echo "Number of serving running pods (expect 4):"
           SERVING_PODS=$(kubectl get po -A | grep serving | grep Running | wc -l)
           echo $SERVING_PODS
