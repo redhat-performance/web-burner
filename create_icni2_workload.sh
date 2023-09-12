@@ -14,6 +14,7 @@ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4b
 export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 #The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
 export LIMITCOUNT=${LIMITCOUNT:-35} 
+export PROBE=${PROBE:-false}      # requires BFD=true 
 export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
 export vf_serving_factor=140
 

@@ -38,7 +38,8 @@ jobs:
       ES_INDEX: "ripsaw-kube-burner"
       INDEXING: "false"
       KUBE_BURNER_RELEASE: "1.7.2"
-      LIMITCOUNT: "1" 
+      LIMITCOUNT: "1"
+      PROBE: "true"
       QPS: "20"
       SCALE: "1"
       SRIOV: "false"
@@ -59,6 +60,7 @@ jobs:
           sudo ufw disable
 
       - name: Docker setup
+        # Mimic Scale Lab
         run: |
           echo '{"bip":"172.17.0.1/16","default-address-pools":[{"base":"192.168.216.0/21","size":21},{"base":"172.17.0.0/12","size":16}]}' | sudo tee /etc/docker/daemon.json
           docker network prune
@@ -91,7 +93,7 @@ jobs:
       - name: Create lb/serving pods
         timeout-minutes: 15
         run: |
-          kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m || kubectl get po -A -o wide
+          kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m
           kubectl get po -A -o wide
           
       - name: Create node-density app/served pods

@@ -59,5 +59,10 @@ spec:
     - name: patch-script
       configMap:
         name: patch-script
-
-
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io/worker-spk
+            operator: Exists

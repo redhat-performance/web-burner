@@ -10,6 +10,15 @@
 		* `./create_icni2_workload.sh <workload> [scale_factor] [bfd_enabled]`
 		* Example: `./create_icni2_workload.sh workload/cfg_icni2_cluster_density2.yml 4 false`
 
+- Index
+  - [End Resources](#end-resources)
+  - [Run locally on a kind cluster](#run-locally-on-a-kind-cluster)
+    - [Without BFD](#without-bfd)
+    - [With BFD](#with-bfd)
+  - [Run on an AWS OCP cluster](#run-on-an-aws-ocp-cluster)
+  - [Run locally on OpenShift Local](#run-locally-on-openshift-local)
+  - [Run through Arcaflow](#run-through-arcaflow)
+
 ## End Resources
 Kube-burner configs are templated to created vz equivalent workload on 120 node cluster.
 ```shell
@@ -86,7 +95,29 @@ Kube-burner configs are templated to created vz equivalent workload on 120 node 
 		└── 1 service with 60 normal pod endpoints on each namespace
 ```
 
-### Run locally on a kind cluster
+## Run locally on a kind cluster
+
+> For the BFD setup to work you need to configure `docker` to mimic the Scale Lab subnet setup. Configure your `/etc/docker/daemon.json` (rootful docker) or `$HOME/.config/docker/daemon.json` (rootless) as follows:
+> ```yaml
+> {
+>   "bip": "172.17.0.1/16",
+>   "default-address-pools":
+>   [
+>     {"base":"192.168.216.0/21","size":21},
+>     {
+>       "base" : "172.17.0.0/12",
+>       "size" : 16
+>     }
+>   ]
+> }
+> ```
+> 
+> Then restart the docker service:
+> ```
+> $ docker network prune
+> $ sudo systemctl restart docker            # for rootful docker
+> $ systemctl restart --user docker.service  # rootless
+> ```
 
 First create a local kind cluster with ONV-Kubernetes as CNI:
 ```
@@ -151,6 +182,8 @@ Create a secret from the KUBECONFIG:
 $ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 ```
 
+### Without BFD
+
 Export the following variables:
 ```
 $ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
@@ -158,6 +191,7 @@ $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
 $ export SCALE=${SCALE:-1}
 $ export BFD=${BFD:-false}
+$ export PROBE=false
 $ export SRIOV=false
 $ export BRIDGE=breth0
 $ export LIMITCOUNT=1
@@ -231,7 +265,7 @@ sh-4.4$ exit
 ```
 
 Check the macvlan network attachment definition:
-```
+```yaml
 $ kubectl get net-attach-def -n serving-ns-0
 NAME          AGE
 sriov-net-0   3m16s
@@ -293,7 +327,7 @@ Events:  <none>
 
 To avoid the disk quota exceeded errors when creating the served/application pods increase maxkeys kernel parameter:
 ```
-echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
+$ sudo sysctl -w kernel.keys.maxkeys=5000
 ```
 
 Create the served/application pods (took 4m):
@@ -326,7 +360,213 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 61
 ```
 
-### Run on an AWS OCP cluster
+### With BFD
+
+Export the following variables:
+```
+$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
+$ export QPS=${QPS:-20}
+$ export BURST=${BURST:-20}
+$ export SCALE=${SCALE:-1}
+$ export BFD=true
+$ export PROBE=true
+$ export SRIOV=false
+$ export BRIDGE=breth0
+$ export LIMITCOUNT=1
+$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
+```
+
+Make sure kube-burner is installed in the appropiate version:
+```
+$ kube-burner version
+Version: 1.7.2
+Git Commit: 910b28640fb28fbee93c923caf43e52ea4895fae
+Build Date: 2023-07-04T14:45:38Z
+Go Version: go1.19.10
+OS/Arch: linux amd64
+```
+
+Create the load balancing/serving resources (took 2m):
+```
+$ kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
+time="2023-07-11 09:05:38" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
+time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
+time="2023-07-11 09:05:41" level=info msg="📈 Creating measurement factory" file="factory.go:51"
+time="2023-07-11 09:05:41" level=info msg="Registered measurement: podLatency" file="factory.go:83"
+time="2023-07-11 09:05:41" level=info msg="Job init-job: 1 iterations with 1 ConfigMap replicas" file="create.go:87"
+...
+time="2023-07-11 09:06:54" level=info msg="serving-job: Initialized 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:06:54" level=info msg="serving-job: Ready 50th: 50358 99th: 54357 max: 54357 avg: 51857" file="pod_latency.go:168"
+time="2023-07-11 09:06:54" level=info msg="serving-job: PodScheduled 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:06:54" level=info msg="serving-job: ContainersReady 50th: 50358 99th: 54357 max: 54357 avg: 51857" file="pod_latency.go:168"
+...
+time="2023-07-11 09:06:56" level=info msg="Indexing finished in 409ms: created=1" file="metadata.go:61"
+time="2023-07-11 09:06:56" level=info msg="Finished execution with UUID: 1234" file="job.go:193"
+time="2023-07-11 09:06:56" level=info msg="👋 Exiting kube-burner 1234" file="kube-burner.go:96"
+```
+
+Check the newly created pods:
+```
+$ kubectl get po -A | grep serv
+served-ns-0          dep-served-init-0-1-init-served-job-768bd7d854-m2s6h   1/1     Running   0               84s
+serving-ns-0         dep-serving-0-1-serving-job-5f97f469dc-7wczm           2/2     Running   0               77s
+serving-ns-0         dep-serving-0-2-serving-job-7567c7748-f5nxs            2/2     Running   0               77s
+serving-ns-0         dep-serving-0-3-serving-job-548bc588c4-77gw7           2/2     Running   0               77s
+serving-ns-0         dep-serving-0-4-serving-job-7bbd48ff6-n8jm7            2/2     Running   0               77s
+```
+
+Check one of the serving pods for:
+ - the second interface
+ - the second address in the loopback interface (`172.18.0.10/32`)
+ - the routes (`kubectl get nodes -o jsonpath='{range .items[*].metadata.annotations}{.k8s\.ovn\.org\/node\-subnets}{.k8s\.ovn\.org\/node\-primary\-ifaddr}{"\n"}{end}' | awk -F'["/]' '{print "ip route " $4"/"$5 " " $9}'`)
+ - the BFD session established with the node `ovn-worker2`
+```
+$ kubectl exec -n serving-ns-0 -it dep-serving-0-1-serving-job-5f97f469dc-7wczm -- sh
+Defaulted container "bfd" out of: bfd, patch
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet 172.18.0.10/32 scope global lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0@if26: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc noqueue state UP group default 
+    link/ether 0a:58:0a:f4:01:13 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.244.1.19/24 brd 10.244.1.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::858:aff:fef4:113/64 scope link 
+       valid_lft forever preferred_lft forever
+3: net1@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether ce:e5:5b:28:87:43 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 192.168.219.1/21 brd 192.168.223.255 scope global net1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::cce5:5bff:fe28:8743/64 scope link 
+       valid_lft forever preferred_lft forever
+
+sh-5.1# ip r
+default via 10.244.1.1 dev eth0 
+10.96.0.0/16 via 10.244.1.1 dev eth0 
+10.244.0.0/24 nhid 18 via 192.168.216.2 dev net1 proto 196 metric 20 
+10.244.0.0/16 via 10.244.1.1 dev eth0 
+10.244.1.0/24 dev eth0 proto kernel scope link src 10.244.1.19 
+10.244.2.0/24 nhid 17 via 192.168.216.3 dev net1 proto 196 metric 20 
+100.64.0.0/16 via 10.244.1.1 dev eth0 
+192.168.216.0/21 dev net1 proto kernel scope link src 192.168.219.1
+
+sh-5.1# vtysh -c "show bfd peers brief" | grep up
+160369874  192.168.219.1                            192.168.216.2                           up             
+807179051  192.168.219.1                            192.168.216.3                           up
+```
+
+From the app/served pod you should be able to ping the IP set on the loopback interface of the lb/serving pod:
+```
+$ kubectl exec -n served-ns-0 dep-served-init-0-1-init-served-job-58b4ff5b99-cgtkw -- ping -c 1 172.18.0.10
+PING 172.18.0.10 (172.18.0.10) 56(84) bytes of data.
+64 bytes from 172.18.0.10: icmp_seq=1 ttl=62 time=0.074 ms
+--- 172.18.0.10 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.074/0.074/0.074/0.000 ms
+```
+
+Check the macvlan network attachment definition:
+```yaml
+$ kubectl get net-attach-def -n serving-ns-0
+NAME          AGE
+sriov-net-0   3m16s
+ 
+$ kubectl describe net-attach-def -n serving-ns-0
+Name:         sriov-net-0
+Namespace:    serving-ns-0
+Labels:       kube-burner-index=0
+              kube-burner-job=create-networks-job
+              kube-burner-uuid=1234
+Annotations:  <none>
+API Version:  k8s.cni.cncf.io/v1
+Kind:         NetworkAttachmentDefinition
+Metadata:
+  Creation Timestamp:  2023-07-11T07:05:43Z
+  Generation:          1
+  Managed Fields:
+    API Version:  k8s.cni.cncf.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:labels:
+          .:
+          f:kube-burner-index:
+          f:kube-burner-job:
+          f:kube-burner-uuid:
+      f:spec:
+        .:
+        f:config:
+    Manager:         kube-burner
+    Operation:       Update
+    Time:            2023-07-11T07:05:43Z
+  Resource Version:  1514
+  UID:               0eb97ddc-3134-40dc-930b-b9534a060b66
+Spec:
+  Config:  {
+  "cniVersion": "0.3.1",
+  "name": "internal-net",
+  "plugins": [
+    {
+      "type": "macvlan",
+      "master": "breth0",
+      "mode": "bridge",
+      "ipam": {
+        "type": "static"
+      }
+    },
+    {
+      "capabilities": {
+        "mac": true,
+        "ips": true
+      },
+      "type": "tuning"
+    }
+  ]
+}
+Events:  <none>
+```
+
+To avoid the disk quota exceeded errors when creating the served/application pods increase maxkeys kernel parameter:
+```
+$ sudo sysctl -w kernel.keys.maxkeys=5000
+```
+
+Create the served/application pods (took 4m):
+```
+$ kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
+time="2023-07-11 09:09:58" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
+time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
+time="2023-07-11 09:10:01" level=info msg="📈 Creating measurement factory" file="factory.go:51"
+time="2023-07-11 09:10:01" level=info msg="Registered measurement: podLatency" file="factory.go:83"
+time="2023-07-11 09:10:01" level=info msg="Job normal-service-job-1: 1 iterations with 1 Service replicas" file="create.go:87"
+...
+time="2023-07-11 09:14:08" level=info msg="Indexing finished in 4.457s: created=60" file="pod_latency.go:193"
+time="2023-07-11 09:14:09" level=info msg="Indexing finished in 1.12s: created=4" file="pod_latency.go:193"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: Initialized 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: Ready 50th: 207326 99th: 233786 max: 233786 avg: 169819" file="pod_latency.go:168"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: PodScheduled 50th: 0 99th: 0 max: 0 avg: 0" file="pod_latency.go:168"
+time="2023-07-11 09:14:09" level=info msg="normal-job-1: ContainersReady 50th: 207326 99th: 233786 max: 233786 avg: 169819" file="pod_latency.go:168"
+...
+time="2023-07-11 09:14:10" level=info msg="Indexing finished in 236ms: created=1" file="metadata.go:61"
+time="2023-07-11 09:14:10" level=info msg="Finished execution with UUID: 1235" file="job.go:193"
+time="2023-07-11 09:14:10" level=info msg="👋 Exiting kube-burner 1235" file="kube-burner.go:96"
+```
+
+Check the object counts:
+```
+$ kubectl get po -A | grep serving | grep Running | wc -l
+4
+
+$ kubectl get po -A | grep served | grep Running | wc -l
+61
+```
+
+## Run on an AWS OCP cluster
 
 Let's assume an AWS OCP cluster with ovn-networking:
 ```
@@ -361,6 +601,7 @@ $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
 $ export SCALE=${SCALE:-1}
 $ export BFD=${BFD:-false}
+$ export PROBE=false
 $ export SRIOV=false
 $ export BRIDGE=${BRIDGE:-br-ex}
 $ export LIMITCOUNT=1
@@ -498,11 +739,11 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 61
 ```
 
-### Run locally on OpenShift Local
+## Run locally on OpenShift Local
 
 OpenShift Local (formally CRC) does not yet support ovn-kubernetes as CNI (see [crc#2294](https://github.com/crc-org/crc/issues/2294)).
 
-### Run through Arcaflow
+## Run through Arcaflow
 
 [arcaflow-plugin-kube-burner](https://github.com/redhat-performance/arcaflow-plugin-kube-burner) can be used to run the web-burner workload in containers.
 
