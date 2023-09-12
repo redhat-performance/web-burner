@@ -471,7 +471,7 @@ rtt min/avg/max/mdev = 0.074/0.074/0.074/0.000 ms
 ```
 
 Check the macvlan network attachment definition:
-```
+```yaml
 $ kubectl get net-attach-def -n serving-ns-0
 NAME          AGE
 sriov-net-0   3m16s
