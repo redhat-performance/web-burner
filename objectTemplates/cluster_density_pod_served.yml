@@ -12,7 +12,15 @@ spec:
     image: gcr.io/google_containers/pause-amd64:3.0
   - name: app-served-{{ .ns }}
     imagePullPolicy: IfNotPresent
-    image: rhscl/httpd-24-rhel7:latest
+    image: quay.io/centos/centos
+    {{ if contains .PROBE "true" }}
+    readinessProbe:
+      exec:
+        command:
+        - ping
+        - -c1
+        - 172.18.0.10
+    {{ end }} 
     ports:
     - containerPort: 8080
       protocol: TCP

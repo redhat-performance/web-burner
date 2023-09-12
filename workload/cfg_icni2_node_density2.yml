@@ -51,9 +51,10 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 60
+        inputVars:
+          probe: "{{ $.PROBE }}"
         waitOptions:
           forCondition: "Ready"
-
 {{ end }}
 
 {{ $servedLimit := mul .LIMITCOUNT .SCALE | int }}
@@ -100,6 +101,8 @@ jobs:
         replicas: 3
         waitOptions:
           forCondition: Ready
+        inputVars:
+          probe: "{{ $.PROBE }}"
 {{ end }}
 
 
@@ -123,3 +126,5 @@ jobs:
         replicas: 3
         waitOptions:
           forCondition: Ready
+        inputVars:
+          probe: "{{ $.PROBE }}"
