@@ -105,7 +105,7 @@ spec:
             nodeSelectorTerms:
             - matchExpressions:
               - key: node-role.kubernetes.io/worker-spk
-                operator: Exist
+                operator: Exists
   replicas: 1
   selector:
     matchLabels:
