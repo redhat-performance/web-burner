@@ -441,6 +441,70 @@ sh-5.1# vtysh -c "show bfd peers brief" | grep up
 807179051  192.168.219.1                            192.168.216.3                           up
 ```
 
+Let’s check everything was properly created from the OVN perspective (BFD sessions, ECMP BFD entries):
+```
+$ POD=$(kubectl get pod -n ovn-kubernetes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | grep ovnkube-db-) ; kubectl exec -ti $POD -n ovn-kubernetes -c nb-ovsdb -- bash
+
+[root@ovn-control-plane ~]# ovn-nbctl list bfd
+_uuid               : c8aa4838-943b-4734-a5b4-e249ae0355b4
+detect_mult         : []
+dst_ip              : "192.168.221.1"
+external_ids        : {}
+logical_port        : rtoe-GR_ovn-worker2
+min_rx              : []
+min_tx              : []
+options             : {}
+status              : up
+
+_uuid               : 3e81efed-ed95-46fe-a49a-67a13f940158
+detect_mult         : []
+dst_ip              : "192.168.222.1"
+external_ids        : {}
+logical_port        : rtoe-GR_ovn-worker2
+min_rx              : []
+min_tx              : []
+options             : {}
+status              : up
+
+_uuid               : 5206243a-1158-496a-8d5f-abcfb783af5b
+detect_mult         : []
+dst_ip              : "192.168.219.1"
+external_ids        : {}
+logical_port        : rtoe-GR_ovn-worker2
+min_rx              : []
+min_tx              : []
+options             : {}
+status              : up
+
+_uuid               : e92cb12e-95d0-4fe4-9f7e-7dc5843d3389
+detect_mult         : []
+dst_ip              : "192.168.220.1"
+external_ids        : {}
+logical_port        : rtoe-GR_ovn-worker2
+min_rx              : []
+min_tx              : []
+options             : {}
+status              : up
+
+[root@ovn-control-plane ~]# ovn-nbctl lr-route-list GR_ovn-worker2
+IPv4 Routes
+Route Table <main>:
+               10.244.0.5             192.168.219.1 src-ip rtoe-GR_ovn-worker2 ecmp ecmp-symmetric-reply bfd
+               10.244.0.5             192.168.220.1 src-ip rtoe-GR_ovn-worker2 ecmp ecmp-symmetric-reply bfd
+               10.244.0.5             192.168.221.1 src-ip rtoe-GR_ovn-worker2 ecmp ecmp-symmetric-reply bfd
+               10.244.0.5             192.168.222.1 src-ip rtoe-GR_ovn-worker2 ecmp ecmp-symmetric-reply bfd
+         169.254.169.0/29             169.254.169.4 dst-ip rtoe-GR_ovn-worker2
+            10.244.0.0/16                100.64.0.1 dst-ip
+                0.0.0.0/0             192.168.216.1 dst-ip rtoe-GR_ovn-worker2
+
+[root@ovn-control-plane ~]# ovn-nbctl lr-route-list GR_ovn-worker
+IPv4 Routes
+Route Table <main>:
+         169.254.169.0/29             169.254.169.4 dst-ip rtoe-GR_ovn-worker
+            10.244.0.0/16                100.64.0.1 dst-ip
+                0.0.0.0/0             192.168.216.1 dst-ip rtoe-GR_ovn-worker
+```
+
 From the app/served pod you should be able to ping the IP set on the loopback interface of the lb/serving pod:
 ```
 $ kubectl exec -n served-ns-0 dep-served-init-0-1-init-served-job-58b4ff5b99-cgtkw -- ping -c 1 172.18.0.10
