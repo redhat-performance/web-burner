@@ -266,63 +266,44 @@ sh-4.4$ exit
 
 Check the macvlan network attachment definition:
 ```yaml
-$ kubectl get net-attach-def -n serving-ns-0
-NAME          AGE
-sriov-net-0   3m16s
- 
-$ kubectl describe net-attach-def -n serving-ns-0
-Name:         sriov-net-0
-Namespace:    serving-ns-0
-Labels:       kube-burner-index=0
-              kube-burner-job=create-networks-job
-              kube-burner-uuid=1234
-Annotations:  <none>
-API Version:  k8s.cni.cncf.io/v1
-Kind:         NetworkAttachmentDefinition
-Metadata:
-  Creation Timestamp:  2023-07-11T07:05:43Z
-  Generation:          1
-  Managed Fields:
-    API Version:  k8s.cni.cncf.io/v1
-    Fields Type:  FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:labels:
-          .:
-          f:kube-burner-index:
-          f:kube-burner-job:
-          f:kube-burner-uuid:
-      f:spec:
-        .:
-        f:config:
-    Manager:         kube-burner
-    Operation:       Update
-    Time:            2023-07-11T07:05:43Z
-  Resource Version:  1514
-  UID:               0eb97ddc-3134-40dc-930b-b9534a060b66
-Spec:
-  Config:  {
-  "cniVersion": "0.3.1",
-  "name": "internal-net",
-  "plugins": [
+$ kubectl get -n serving-ns-0 net-attach-def sriov-net-0 -o yaml
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  creationTimestamp: "2023-09-22T09:17:50Z"
+  generation: 1
+  labels:
+    kube-burner-index: "0"
+    kube-burner-job: create-networks-job
+    kube-burner-runid: 9fc35e62-f130-4553-9453-b220a09ddaa4
+    kube-burner-uuid: "1234"
+  name: sriov-net-0
+  namespace: serving-ns-0
+  resourceVersion: "5329"
+  uid: 4e63c28d-faab-4780-8d88-058ae4c6e2fb
+spec:
+  config: |-
     {
-      "type": "macvlan",
-      "master": "breth0",
-      "mode": "bridge",
-      "ipam": {
-        "type": "static"
-      }
-    },
-    {
-      "capabilities": {
-        "mac": true,
-        "ips": true
-      },
-      "type": "tuning"
+      "cniVersion": "0.3.1",
+      "name": "internal-net",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "breth0",
+          "mode": "bridge",
+          "ipam": {
+            "type": "static"
+          }
+        },
+        {
+          "capabilities": {
+            "mac": true,
+            "ips": true
+          },
+          "type": "tuning"
+        }
+      ]
     }
-  ]
-}
-Events:  <none>
 ```
 
 To avoid the disk quota exceeded errors when creating the served/application pods increase maxkeys kernel parameter:
@@ -472,63 +453,44 @@ rtt min/avg/max/mdev = 0.074/0.074/0.074/0.000 ms
 
 Check the macvlan network attachment definition:
 ```yaml
-$ kubectl get net-attach-def -n serving-ns-0
-NAME          AGE
-sriov-net-0   3m16s
- 
-$ kubectl describe net-attach-def -n serving-ns-0
-Name:         sriov-net-0
-Namespace:    serving-ns-0
-Labels:       kube-burner-index=0
-              kube-burner-job=create-networks-job
-              kube-burner-uuid=1234
-Annotations:  <none>
-API Version:  k8s.cni.cncf.io/v1
-Kind:         NetworkAttachmentDefinition
-Metadata:
-  Creation Timestamp:  2023-07-11T07:05:43Z
-  Generation:          1
-  Managed Fields:
-    API Version:  k8s.cni.cncf.io/v1
-    Fields Type:  FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:labels:
-          .:
-          f:kube-burner-index:
-          f:kube-burner-job:
-          f:kube-burner-uuid:
-      f:spec:
-        .:
-        f:config:
-    Manager:         kube-burner
-    Operation:       Update
-    Time:            2023-07-11T07:05:43Z
-  Resource Version:  1514
-  UID:               0eb97ddc-3134-40dc-930b-b9534a060b66
-Spec:
-  Config:  {
-  "cniVersion": "0.3.1",
-  "name": "internal-net",
-  "plugins": [
+$ kubectl get -n serving-ns-0 net-attach-def sriov-net-0 -o yaml
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  creationTimestamp: "2023-09-22T09:17:50Z"
+  generation: 1
+  labels:
+    kube-burner-index: "0"
+    kube-burner-job: create-networks-job
+    kube-burner-runid: 9fc35e62-f130-4553-9453-b220a09ddaa4
+    kube-burner-uuid: "1234"
+  name: sriov-net-0
+  namespace: serving-ns-0
+  resourceVersion: "5329"
+  uid: 4e63c28d-faab-4780-8d88-058ae4c6e2fb
+spec:
+  config: |-
     {
-      "type": "macvlan",
-      "master": "breth0",
-      "mode": "bridge",
-      "ipam": {
-        "type": "static"
-      }
-    },
-    {
-      "capabilities": {
-        "mac": true,
-        "ips": true
-      },
-      "type": "tuning"
+      "cniVersion": "0.3.1",
+      "name": "internal-net",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "breth0",
+          "mode": "bridge",
+          "ipam": {
+            "type": "static"
+          }
+        },
+        {
+          "capabilities": {
+            "mac": true,
+            "ips": true
+          },
+          "type": "tuning"
+        }
+      ]
     }
-  ]
-}
-Events:  <none>
 ```
 
 To avoid the disk quota exceeded errors when creating the served/application pods increase maxkeys kernel parameter:
