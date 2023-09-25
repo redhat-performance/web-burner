@@ -10,10 +10,12 @@ spec:
       name: pod-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
       namespace: serving-ns-{{ .Iteration }}
       annotations:
+        {{ if contains .crd "false" }}
         gateway-ip: "192.168.{{ add 218 .Replica }}.{{ add 1 .Iteration }}"
         k8s.ovn.org/routing-namespaces: served-ns-{{ .Iteration }}
         k8s.ovn.org/routing-network: serving-ns-{{ .Iteration }}/sriov-net-{{ .Iteration }}
         k8s.ovn.org/bfd-enabled: ""
+        {{ end }}
         k8s.v1.cni.cncf.io/networks: |-
           [{
               "name": "sriov-net-{{ .Iteration }}",
@@ -28,6 +30,7 @@ spec:
           }]
       labels:
         serving: true-{{ .Replica }}
+        lb: lb-{{ .Iteration }}
     spec:
       serviceAccountName: internal-kubectl
       containers:

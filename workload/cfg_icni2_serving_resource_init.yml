@@ -183,6 +183,27 @@ jobs:
       - objectTemplate: objectTemplates/pod_served.yml
         replicas: 1
 
+{{ if contains .CRD "true" }}
+  - name: init-externalroutes-job
+    jobType: create
+    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
+    qps: 20
+    burst: 20
+    namespacedIterations: false
+    cleanup: false
+    namespace: default
+    podWait: false
+    waitWhenFinished: true
+    verifyObjects: true
+    errorOnVerify: true
+    jobIterationDelay: 0s
+    jobPause: 0s
+    preLoadImages: false
+    objects:
+      - objectTemplate: objectTemplates/adminPolicyBasedExternalRoute.yml
+        replicas: 1
+{{ end }}
+
   - name: serving-job
     jobType: create
     jobIterations: {{ mul .LIMITCOUNT .SCALE }}
@@ -201,3 +222,5 @@ jobs:
     objects:
       - objectTemplate: {{ if contains .BFD "true" }} objectTemplates/pod_serving.yml {{ else }} objectTemplates/pod_serving_no_bfd.yml {{ end }}
         replicas: 4
+        inputVars:
+          crd: "{{ $.CRD }}"

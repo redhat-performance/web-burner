@@ -34,10 +34,11 @@ jobs:
       BFD: "true"
       BRIDGE: "breth0"
       BURST: "20"
+      CRD: "false"
       ES_SERVER: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com"
       ES_INDEX: "ripsaw-kube-burner"
       INDEXING: "false"
-      KUBE_BURNER_RELEASE: "1.7.2"
+      KUBE_BURNER_RELEASE: "1.7.8"
       LIMITCOUNT: "1"
       PROBE: "true"
       QPS: "20"
@@ -84,12 +85,16 @@ jobs:
         run: |
           kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 
+      - name: Cordon master node
+        run: |
+          kubectl cordon ovn-control-plane
+
       - name: Label worker-lb node
         # ovn-worker for lbs/serving pods and ovn-worker2 for apps/served pods
         run: |
           kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrite=true
           kubectl get node -o wide
-          
+                
       - name: Create lb/serving pods
         timeout-minutes: 15
         run: |
