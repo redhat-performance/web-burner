@@ -171,6 +171,12 @@ $ kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrit
 node/ovn-worker labeled
 ```
 
+Cordon the master node to be sure no pods will be scheduled there:
+```
+$ kubectl cordon ovn-control-plane
+node/ovn-control-plane cordoned
+```
+
 Clone the web-burner repository:
 ```
 $ git clone https://github.com/redhat-performance/web-burner.git
