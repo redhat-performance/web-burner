@@ -195,6 +195,7 @@ Export the following variables:
 $ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
 $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
+$ export CRD=false
 $ export SCALE=${SCALE:-1}
 $ export BFD=${BFD:-false}
 $ export PROBE=false
@@ -356,6 +357,7 @@ $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
 $ export SCALE=${SCALE:-1}
 $ export BFD=true
+$ export CRD=false
 $ export PROBE=true
 $ export SRIOV=false
 $ export BRIDGE=breth0
