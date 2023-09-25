@@ -3,7 +3,7 @@
 SCALE=$2
 BFD=$3
 
-export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
+export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.8}
 export QPS=${QPS:-20}
 export BURST=${BURST:-20}
 export SCALE=${SCALE:-1}
@@ -15,6 +15,7 @@ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 #The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
 export LIMITCOUNT=${LIMITCOUNT:-35} 
 export PROBE=${PROBE:-false}      # requires BFD=true 
+export CRD=${CRD:=false}      # use the new AdminPolicyBasedExternalRoute instead of the legacy pod/ns annotations
 export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
 export vf_serving_factor=140
 
