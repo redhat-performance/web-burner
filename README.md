@@ -208,24 +208,6 @@ Create a secret from the KUBECONFIG:
 $ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 ```
 
-### Without BFD
-
-Export the following variables:
-```
-$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.8}
-$ export QPS=${QPS:-20}
-$ export BURST=${BURST:-20}
-$ export CRD=false
-$ export SCALE=${SCALE:-1}
-$ export BFD=${BFD:-false}
-$ export PROBE=false
-$ export SRIOV=false
-$ export BRIDGE=breth0
-$ export LIMITCOUNT=1
-$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
-$ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
-```
-
 Make sure kube-burner is installed in the appropiate version:
 ```
 $ kube-burner version
@@ -234,6 +216,23 @@ Git Commit: 910b28640fb28fbee93c923caf43e52ea4895fae
 Build Date: 2023-07-04T14:45:38Z
 Go Version: go1.19.10
 OS/Arch: linux amd64
+```
+
+### Without BFD
+
+Export the following variables:
+```
+$ export BFD=${BFD:-false}
+$ export BRIDGE=breth0
+$ export BURST=${BURST:-20}
+$ export CRD=false
+$ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
+$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export LIMITCOUNT=1
+$ export PROBE=false
+$ export QPS=${QPS:-20}
+$ export SCALE=${SCALE:-1}
+$ export SRIOV=false
 ```
 
 Create the load balancing/serving resources (took 2m):
@@ -372,28 +371,17 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 
 Export the following variables:
 ```
-$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.8}
-$ export QPS=${QPS:-20}
-$ export BURST=${BURST:-20}
-$ export SCALE=${SCALE:-1}
 $ export BFD=true
-$ export CRD=false
-$ export PROBE=true
-$ export SRIOV=false
 $ export BRIDGE=breth0
-$ export LIMITCOUNT=1
-$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export BURST=${BURST:-20}
+$ export CRD=false
 $ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
-```
-
-Make sure kube-burner is installed in the appropiate version:
-```
-$ kube-burner version
-Version: 1.7.8
-Git Commit: 910b28640fb28fbee93c923caf43e52ea4895fae
-Build Date: 2023-07-04T14:45:38Z
-Go Version: go1.19.10
-OS/Arch: linux amd64
+$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export LIMITCOUNT=1
+$ export PROBE=true
+$ export QPS=${QPS:-20}
+$ export SCALE=${SCALE:-1}
+$ export SRIOV=false
 ```
 
 Create the load balancing/serving resources (took 2m):
@@ -650,17 +638,16 @@ $ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-
 
 Export the following variables:
 ```
-$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.8}
-$ export QPS=${QPS:-20}
-$ export BURST=${BURST:-20}
-$ export SCALE=${SCALE:-1}
 $ export BFD=${BFD:-false}
-$ export PROBE=false
-$ export SRIOV=false
 $ export BRIDGE=${BRIDGE:-br-ex}
-$ export LIMITCOUNT=1
-$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export BURST=${BURST:-20}
 $ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
+$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export LIMITCOUNT=1
+$ export PROBE=false
+$ export QPS=${QPS:-20}
+$ export SCALE=${SCALE:-1}
+$ export SRIOV=false
 ```
 
 Make sure kube-burner is installed in the appropiate version:
