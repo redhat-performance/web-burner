@@ -521,6 +521,11 @@ Route Table <main>:
                 0.0.0.0/0             192.168.216.1 dst-ip rtoe-GR_ovn-worker
 ```
 
+> With IC, previous command is different as each node hosts its own OVN zone database:
+> ```
+> POD=$(kubectl get pod -n ovn-kubernetes --field-selector spec.nodeName=ovn-worker2 -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | grep ovnkube-node-) ; kubectl exec -ti $POD -n ovn-kubernetes -c nb-ovsdb -- bash
+> ```
+
 From the app/served pod you should be able to ping the IP set on the loopback interface of the lb/serving pod:
 ```
 $ kubectl exec -n served-ns-0 dep-served-init-0-1-init-served-job-58b4ff5b99-cgtkw -- ping -c 1 172.18.0.10
