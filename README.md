@@ -171,6 +171,20 @@ ovn-kubernetes       ovs-node-s5drz                              1/1     Running
 ovn-kubernetes       ovs-node-vbkrp                              1/1     Running   0               3m15s
 ```
 
+> With IC, OVC pods will look a bit different:
+> ```
+> kubectl get po -n ovn-kubernetes
+> NAME                                     READY   STATUS    RESTARTS   AGE
+> ovnkube-control-plane-55b7c744d6-g4z8k   1/1     Running   0          82m
+> ovnkube-identity-7dd8c767c-l2m87         1/1     Running   0          82m
+> ovnkube-node-277xn                       6/6     Running   0          82m
+> ovnkube-node-h9r8n                       6/6     Running   0          82m
+> ovnkube-node-nkcn2                       6/6     Running   0          82m
+> ovs-node-kg8v9                           1/1     Running   0          82m
+> ovs-node-ml8pd                           1/1     Running   0          82m
+> ovs-node-s9jdf                           1/1     Running   0          82m
+> ```
+
 Label one of the worker nodes for hosting the load balancers:
 ```
 $ kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrite=true
