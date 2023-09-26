@@ -126,10 +126,10 @@ $ cd ovn-kubernetes/contrib
 $ ./kind.sh --install-cni-plugins --disable-snat-multiple-gws --multi-network-enable
 ```
 
-If you want OVN Interconnect (OVN-IC):
-```
-$ ./kind.sh --install-cni-plugins --disable-snat-multiple-gws --multi-network-enable --enable-interconnect
-```
+> If you want OVN Interconnect (OVN-IC):
+> ```
+> $ ./kind.sh --install-cni-plugins --disable-snat-multiple-gws --multi-network-enable --enable-interconnect
+> ```
 
 Let's take a look at the options:
  - `install-cni-plugins`: Installs additional CNI network plugins
