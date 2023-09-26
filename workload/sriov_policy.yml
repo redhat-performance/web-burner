@@ -8,6 +8,7 @@ spec:
   nicSelector:
     pfNames:
      - $sriov_nic
+  mtu: 8900
   nodeSelector:
     node-role.kubernetes.io/worker-spk: ""
   numVfs: 64
