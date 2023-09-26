@@ -126,10 +126,16 @@ $ cd ovn-kubernetes/contrib
 $ ./kind.sh --install-cni-plugins --disable-snat-multiple-gws --multi-network-enable
 ```
 
+If you want OVN Interconnect (OVN-IC):
+```
+$ ./kind.sh --install-cni-plugins --disable-snat-multiple-gws --multi-network-enable --enable-interconnect
+```
+
 Let's take a look at the options:
  - `install-cni-plugins`: Installs additional CNI network plugins
  - `disable-snat-multiple-gws`: Disable SNAT for multiple gws
  - `multi-network-enable`: Installs [Multus-CNI](https://github.com/k8snetworkplumbingwg/multus-cni) on the cluster
+ - `enable-interconnect`: Enable interconnect with each node as a zone (only valid if OVN_HA is false)
 
 After some minutes (took 4m), we will have a three node cluster ready for use:
 ```
