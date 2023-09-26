@@ -212,7 +212,7 @@ $ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-
 
 Export the following variables:
 ```
-$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
+$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.8}
 $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
 $ export CRD=false
@@ -229,7 +229,7 @@ $ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 Make sure kube-burner is installed in the appropiate version:
 ```
 $ kube-burner version
-Version: 1.7.2
+Version: 1.7.8
 Git Commit: 910b28640fb28fbee93c923caf43e52ea4895fae
 Build Date: 2023-07-04T14:45:38Z
 Go Version: go1.19.10
@@ -240,7 +240,7 @@ Create the load balancing/serving resources (took 2m):
 ```
 $ kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
 time="2023-07-11 09:05:38" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
-time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
+time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.8@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
 time="2023-07-11 09:05:41" level=info msg="📈 Creating measurement factory" file="factory.go:51"
 time="2023-07-11 09:05:41" level=info msg="Registered measurement: podLatency" file="factory.go:83"
 time="2023-07-11 09:05:41" level=info msg="Job init-job: 1 iterations with 1 ConfigMap replicas" file="create.go:87"
@@ -342,7 +342,7 @@ Create the served/application pods (took 4m):
 ```
 $ kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
 time="2023-07-11 09:09:58" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
-time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
+time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.8@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
 time="2023-07-11 09:10:01" level=info msg="📈 Creating measurement factory" file="factory.go:51"
 time="2023-07-11 09:10:01" level=info msg="Registered measurement: podLatency" file="factory.go:83"
 time="2023-07-11 09:10:01" level=info msg="Job normal-service-job-1: 1 iterations with 1 Service replicas" file="create.go:87"
@@ -372,7 +372,7 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 
 Export the following variables:
 ```
-$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
+$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.8}
 $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
 $ export SCALE=${SCALE:-1}
@@ -389,7 +389,7 @@ $ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 Make sure kube-burner is installed in the appropiate version:
 ```
 $ kube-burner version
-Version: 1.7.2
+Version: 1.7.8
 Git Commit: 910b28640fb28fbee93c923caf43e52ea4895fae
 Build Date: 2023-07-04T14:45:38Z
 Go Version: go1.19.10
@@ -400,7 +400,7 @@ Create the load balancing/serving resources (took 2m):
 ```
 $ kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
 time="2023-07-11 09:05:38" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
-time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
+time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.8@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
 time="2023-07-11 09:05:41" level=info msg="📈 Creating measurement factory" file="factory.go:51"
 time="2023-07-11 09:05:41" level=info msg="Registered measurement: podLatency" file="factory.go:83"
 time="2023-07-11 09:05:41" level=info msg="Job init-job: 1 iterations with 1 ConfigMap replicas" file="create.go:87"
@@ -594,7 +594,7 @@ Create the served/application pods (took 4m):
 ```
 $ kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
 time="2023-07-11 09:09:58" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
-time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
+time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.8@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
 time="2023-07-11 09:10:01" level=info msg="📈 Creating measurement factory" file="factory.go:51"
 time="2023-07-11 09:10:01" level=info msg="Registered measurement: podLatency" file="factory.go:83"
 time="2023-07-11 09:10:01" level=info msg="Job normal-service-job-1: 1 iterations with 1 Service replicas" file="create.go:87"
@@ -650,7 +650,7 @@ $ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-
 
 Export the following variables:
 ```
-$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.2}
+$ export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.8}
 $ export QPS=${QPS:-20}
 $ export BURST=${BURST:-20}
 $ export SCALE=${SCALE:-1}
@@ -666,7 +666,7 @@ $ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
 Make sure kube-burner is installed in the appropiate version:
 ```
 $ kube-burner version
-Version: 1.7.2
+Version: 1.7.8
 Git Commit: 910b28640fb28fbee93c923caf43e52ea4895fae
 Build Date: 2023-07-04T14:45:38Z
 Go Version: go1.19.10
@@ -677,7 +677,7 @@ Create the load balancing/serving resources:
 ```
 $ kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234
 time="2023-07-11 09:05:38" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
-time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
+time="2023-07-11 09:05:41" level=info msg="🔥 Starting kube-burner (1.7.8@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1234" file="job.go:83"
 time="2023-07-11 09:05:41" level=info msg="📈 Creating measurement factory" file="factory.go:51"
 time="2023-07-11 09:05:41" level=info msg="Registered measurement: podLatency" file="factory.go:83"
 time="2023-07-11 09:05:41" level=info msg="Job init-job: 1 iterations with 1 ConfigMap replicas" file="create.go:87"
@@ -767,7 +767,7 @@ Create the served/application pods:
 ```
 $ kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
 time="2023-07-11 09:09:58" level=info msg="📁 Creating indexer: elastic" file="metrics.go:40"
-time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.2@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
+time="2023-07-11 09:10:01" level=info msg="🔥 Starting kube-burner (1.7.8@910b28640fb28fbee93c923caf43e52ea4895fae) with UUID 1235" file="job.go:83"
 time="2023-07-11 09:10:01" level=info msg="📈 Creating measurement factory" file="factory.go:51"
 time="2023-07-11 09:10:01" level=info msg="Registered measurement: podLatency" file="factory.go:83"
 time="2023-07-11 09:10:01" level=info msg="Job normal-service-job-1: 1 iterations with 1 Service replicas" file="create.go:87"
