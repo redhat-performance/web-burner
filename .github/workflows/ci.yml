@@ -36,7 +36,7 @@ jobs:
       BRIDGE: "breth0"
       BURST: "20"
       CRD: "false"
-      ES_SERVER: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com"
+      ES_SERVER: ""
       ES_INDEX: "ripsaw-kube-burner"
       INDEXING: "false"
       KUBE_BURNER_RELEASE: "1.7.8"
