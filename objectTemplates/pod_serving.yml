@@ -40,6 +40,7 @@ spec:
           - sh
           - -c
           - >-
+             sysctl -w net.ipv4.ip_forward=1 &&
              cp /config/* /etc/frr/ &&
              for i in {2..254}; do echo " peer $(kubectl get nodes -o jsonpath='{.items[0].metadata.annotations.k8s\.ovn\.org\/node-primary-ifaddr}' | cut -d '"' -f4- | sed 's/\.[^.]*$//').$i" >> /etc/frr/frr.conf; done &&
              echo "  no shutdown" >> /etc/frr/frr.conf &&
@@ -67,8 +68,7 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
         securityContext:
-          capabilities:
-            add: ["NET_ADMIN", "NET_RAW", "SYS_ADMIN", "NET_BIND_SERVICE"]
+          privileged: true
         volumeMounts:
           - name: config-volume
             mountPath: /config
