@@ -1,233 +1,134 @@
----
-# Kubelet & CRI-O
+# API server
 
-# Average of the CPU usage from all worker's kubelet
-- query: avg(avg_over_time(irate(process_cpu_seconds_total{service="kubelet",job="kubelet"}[2m])[{{.elapsed}}:]) and on (node) kube_node_role{role="worker"})
-  metricName: cpu-kubelet
+- query: irate(apiserver_request_total{verb="POST", resource="pods", subresource="binding",code="201"}[2m]) > 0
+  metricName: schedulingThroughput
+
+- query: histogram_quantile(0.99, sum(irate(apiserver_request_duration_seconds_bucket{apiserver="kube-apiserver", verb=~"LIST|GET", subresource!~"log|exec|portforward|attach|proxy"}[2m])) by (le, resource, verb, scope)) > 0
+  metricName: readOnlyAPICallsLatency
+
+- query: histogram_quantile(0.99, sum(irate(apiserver_request_duration_seconds_bucket{apiserver="kube-apiserver", verb=~"POST|PUT|DELETE|PATCH", subresource!~"log|exec|portforward|attach|proxy"}[2m])) by (le, resource, verb, scope)) > 0
+  metricName: mutatingAPICallsLatency
+
+- query: sum(irate(apiserver_request_total{apiserver="kube-apiserver",verb!="WATCH"}[2m])) by (verb,resource,code) > 0
+  metricName: APIRequestRate
+
+# Kubeproxy and OVN service sync latency
+
+- query: histogram_quantile(0.99, sum(rate(kubeproxy_network_programming_duration_seconds_bucket[2m])) by (le)) > 0
+  metricName: serviceSyncLatency
+
+- query: histogram_quantile(0.99, sum(rate(ovnkube_master_network_programming_duration_seconds_bucket{kind="service"}[2m])) by (le))
+  metricName: serviceSyncLatency
+
+# Containers & pod metrics
+
+- query: (sum(irate(container_cpu_usage_seconds_total{name!="",container!~"POD|",namespace=~"openshift-(etcd|.*apiserver|ovn-kubernetes|network-node-identity|multus|sdn|ingress|.*controller-manager|.*scheduler)"}[2m]) * 100) by (container, pod, namespace, node)) > 0
+  metricName: containerCPU
+
+- query: sum(container_memory_rss{name!="",container!~"POD|",namespace=~"openshift-(etcd|.*apiserver|ovn-kubernetes|network-node-identity|multus|sdn|ingress|.*controller-manager|.*scheduler)"}) by (container, pod, namespace, node)
+  metricName: containerMemory
+
+# Kubelet & CRI-O runtime metrics
+
+- query: sum(irate(process_cpu_seconds_total{service="kubelet",job="kubelet"}[2m]) * 100) by (node) and on (node) kube_node_role{role="worker"}
+  metricName: kubeletCPU
+
+- query: sum(process_resident_memory_bytes{service="kubelet",job="kubelet"}) by (node) and on (node) kube_node_role{role="worker"}
+  metricName: kubeletMemory
+
+- query: sum(irate(process_cpu_seconds_total{service="kubelet",job="crio"}[2m]) * 100) by (node) and on (node) kube_node_role{role="worker"}
+  metricName: crioCPU
+
+- query: sum(process_resident_memory_bytes{service="kubelet",job="crio"}) by (node) and on (node) kube_node_role{role="worker"}
+  metricName: crioMemory
+
+- query: irate(container_runtime_crio_operations_latency_microseconds{operation_type="network_setup_pod"}[2m]) > 0
+  metricName: containerNetworkSetupLatency
+
+# Node metrics: CPU & Memory
+
+- query: (sum(irate(node_cpu_seconds_total[2m])) by (mode,instance) and on (instance) label_replace(kube_node_role{role="worker"}, "instance", "$1", "node", "(.+)")) > 0
+  metricName: nodeCPU-Workers
+
+- query: (sum(irate(node_cpu_seconds_total[2m])) by (mode,instance) and on (instance) label_replace(kube_node_role{role="master"}, "instance", "$1", "node", "(.+)")) > 0
+  metricName: nodeCPU-Masters
+
+- query: (sum(irate(node_cpu_seconds_total[2m])) by (mode,instance) and on (instance) label_replace(kube_node_role{role="infra"}, "instance", "$1", "node", "(.+)")) > 0
+  metricName: nodeCPU-Infra
+
+# We compute memory utilization by substrating available memory to the total
+
+- query: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) and on (instance) label_replace(kube_node_role{role="master"}, "instance", "$1", "node", "(.+)")
+  metricName: nodeMemoryUtilization-Masters
+
+- query: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) and on (instance) label_replace(kube_node_role{role="worker"}, "instance", "$1", "node", "(.+)")
+  metricName: nodeMemoryUtilization-Workers
+
+- query: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) and on (instance) label_replace(kube_node_role{role="infra"}, "instance", "$1", "node", "(.+)")
+  metricName: nodeMemoryUtilization-Infra
+
+# Etcd metrics
+
+- query: sum(rate(etcd_server_leader_changes_seen_total[2m]))
+  metricName: etcdLeaderChangesRate
+
+- query: histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket[2m]))
+  metricName: 99thEtcdDiskBackendCommitDurationSeconds
+
+- query: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[2m]))
+  metricName: 99thEtcdDiskWalFsyncDurationSeconds
+
+- query: histogram_quantile(0.99, rate(etcd_network_peer_round_trip_time_seconds_bucket[5m]))
+  metricName: 99thEtcdRoundTripTimeSeconds
+
+- query: sum by (cluster_version)(etcd_cluster_version)
+  metricName: etcdVersion
   instant: true
 
-# Average of the memory usage from all worker's kubelet
-- query: avg(avg_over_time(process_resident_memory_bytes{service="kubelet",job="kubelet"}[{{.elapsed}}:]) and on (node) kube_node_role{role="worker"})
-  metricName: memory-kubelet
+# Cluster metrics
+
+- query: sum(kube_namespace_status_phase) by (phase) > 0
+  metricName: namespaceCount
+
+- query: sum(kube_pod_status_phase{}) by (phase)
+  metricName: podStatusCount
+
+- query: count(kube_secret_info{})
+  metricName: secretCount
   instant: true
 
-# Max of the memory usage from all worker's kubelet
-- query: max(max_over_time(process_resident_memory_bytes{service="kubelet",job="kubelet"}[{{.elapsed}}:]) and on (node) kube_node_role{role="worker"})
-  metricName: max-memory-kubelet
+- query: count(kube_deployment_labels{})
+  metricName: deploymentCount
   instant: true
 
-# Average of the CPU usage from all worker's CRI-O
-- query: avg(avg_over_time(irate(process_cpu_seconds_total{service="kubelet",job="crio"}[2m])[{{.elapsed}}:]) and on (node) kube_node_role{role="worker"})
-  metricName: cpu-crio
+- query: count(kube_configmap_info{})
+  metricName: configmapCount
   instant: true
 
-# Average of the memory usage from all worker's CRI-O
-- query: avg(avg_over_time(process_resident_memory_bytes{service="kubelet",job="crio"}[{{.elapsed}}:]) and on (node) kube_node_role{role="worker"})
-  metricName: memory-crio
+- query: count(kube_service_info{})
+  metricName: serviceCount
   instant: true
 
-# Max of the memory usage from all worker's CRI-O
-- query: max(max_over_time(process_resident_memory_bytes{service="kubelet",job="crio"}[{{.elapsed}}:]) and on (node) kube_node_role{role="worker"})
-  metricName: max-memory-crio
+- query: kube_node_role
+  metricName: nodeRoles
+
+- query: sum(kube_node_status_condition{status="true"}) by (condition)
+  metricName: nodeStatus
+
+- query: count(kube_replicaset_labels{})
+  metricName: replicaSetCount
   instant: true
 
-# Etcd
+- query: count(kube_pod_info{} AND ON (pod) kube_pod_status_phase{phase="Running"}==1) by (node)
+  metricName: podDistribution
 
-- query: avg(avg_over_time(histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket[2m]))[{{.elapsed}}:]))
-  metricName: 99thEtcdDiskBackendCommit
-  instant: true
+# Prometheus metrics
 
-- query: avg(avg_over_time(histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[2m]))[{{.elapsed}}:]))
-  metricName: 99thEtcdDiskWalFsync
-  instant: true
+- query: openshift:prometheus_tsdb_head_series:sum{job="prometheus-k8s"}
+  metricName: prometheus-timeseriestotal
 
-- query: avg(avg_over_time(histogram_quantile(0.99, irate(etcd_network_peer_round_trip_time_seconds_bucket[2m]))[{{.elapsed}}:]))
-  metricName: 99thEtcdRoundTripTime
-  instant: true
-
-# Control-plane
-
-- query: avg(avg_over_time(topk(1, sum(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-kube-controller-manager"}[2m])) by (pod))[{{.elapsed}}:]))
-  metricName: cpu-kube-controller-manager
-  instant: true
-
-- query: avg(avg_over_time(topk(1, sum(container_memory_rss{name!="", namespace="openshift-kube-controller-manager"}) by (pod))[{{.elapsed}}:]))
-  metricName: memory-kube-controller-manager
-  instant: true
-
-- query: max(max_over_time(topk(1, sum(container_memory_rss{name!="", namespace="openshift-kube-controller-manager"}) by (pod))[{{.elapsed}}:]))
-  metricName: max-memory-kube-controller-manager
-  instant: true
-
-- query: avg(avg_over_time(topk(3, sum(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-kube-apiserver"}[2m])) by (pod))[{{.elapsed}}:]))
-  metricName: cpu-kube-apiserver
-  instant: true
-
-- query: avg(avg_over_time(topk(3, sum(container_memory_rss{name!="", namespace="openshift-kube-apiserver"}) by (pod))[{{.elapsed}}:]))
-  metricName: memory-kube-apiserver
-  instant: true
-
-- query: max(max_over_time(topk(3, sum(container_memory_rss{name!="", namespace="openshift-kube-apiserver"}) by (pod))[{{.elapsed}}:]))
-  metricName: max-memory-kube-apiserver
-  instant: true
-
-- query: avg(avg_over_time(topk(3, sum(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-apiserver"}[2m])) by (pod))[{{.elapsed}}:]))
-  metricName: cpu-openshift-apiserver
-  instant: true
-
-- query: avg(avg_over_time(topk(3, sum(container_memory_rss{name!="", namespace="openshift-apiserver"}) by (pod))[{{.elapsed}}:]))
-  metricName: memory-openshift-apiserver
-  instant: true
-
-- query: max(max_over_time(topk(3, sum(container_memory_rss{name!="", namespace="openshift-apiserver"}) by (pod))[{{.elapsed}}:]))
-  metricName: max-memory-openshift-apiserver
-  instant: true
-
-- query: avg(avg_over_time(topk(3, sum(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-etcd"}[2m])) by (pod))[{{.elapsed}}:]))
-  metricName: cpu-etcd
-  instant: true
-
-- query: avg(avg_over_time(topk(1, sum(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-controller-manager"}[2m])) by (pod))[{{.elapsed}}:]))
-  metricName: cpu-openshift-controller-manager
-  instant: true
-
-- query: avg(avg_over_time(topk(1, sum(container_memory_rss{name!="", namespace="openshift-controller-manager"}) by (pod))[{{.elapsed}}:]))
-  metricName: memory-openshift-controller-manager
-  instant: true
-
-- query: max(max_over_time(topk(1, sum(container_memory_rss{name!="", namespace="openshift-controller-manager"}) by (pod))[{{.elapsed}}:]))
-  metricName: max-memory-openshift-controller-manager
-  instant: true
-
-- query: avg(avg_over_time(topk(3,sum(container_memory_rss{name!="", namespace="openshift-etcd"}) by (pod))[{{.elapsed}}:]))
-  metricName: memory-etcd
-  instant: true
-
-- query: max(max_over_time(topk(3,sum(container_memory_rss{name!="", namespace="openshift-etcd"}) by (pod))[{{.elapsed}}:]))
-  metricName: max-memory-etcd
-  instant: true
-
- # multus
-
-- query: avg(avg_over_time(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-multus", pod=~"(multus).+", container!="POD"}[2m])[{{.elapsed}}:])) by (container)
-  metricName: cpu-multus
-  instant: true
-
-- query: avg(avg_over_time(container_memory_rss{name!="", namespace="openshift-multus", pod=~"(multus).+", container!="POD"}[{{.elapsed}}:])) by (container)
-  metricName: memory-multus
-  instant: true
-
-- query: max(avg_over_time(container_memory_rss{name!="", namespace="openshift-multus", pod=~"(multus).+", container!="POD"}[{{.elapsed}}:])) by (container)
-  metricName: max-memory-multus
-  instant: true
-
-# OVNKubernetes - standard & IC
-
-- query: avg(avg_over_time(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-ovn-kubernetes", pod=~"(ovnkube-master|ovnkube-control-plane).+", container!="POD"}[2m])[{{.elapsed}}:])) by (container)
-  metricName: cpu-ovn-control-plane
-  instant: true
-
-- query: avg(avg_over_time(container_memory_rss{name!="", namespace="openshift-ovn-kubernetes", pod=~"(ovnkube-master|ovnkube-control-plane).+", container!="POD"}[{{.elapsed}}:])) by (container)
-  metricName: memory-ovn-control-plane
-  instant: true
-
-- query: max(avg_over_time(container_memory_rss{name!="", namespace="openshift-ovn-kubernetes", pod=~"(ovnkube-master|ovnkube-control-plane).+", container!="POD"}[{{.elapsed}}:])) by (container)
-  metricName: max-memory-ovn-control-plane
-  instant: true
-
-- query: avg(avg_over_time(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-ovn-kubernetes", pod=~"ovnkube-node.+", container!="POD"}[2m])[{{.elapsed}}:])) by (container)
-  metricName: cpu-ovnkube-node
-  instant: true
-
-- query: avg(avg_over_time(container_memory_rss{name!="", namespace="openshift-ovn-kubernetes", pod=~"ovnkube-node.+", container!="POD"}[{{.elapsed}}:])) by (container)
-  metricName: memory-ovnkube-node
-  instant: true
-
-- query: max(max_over_time(container_memory_rss{name!="", namespace="openshift-ovn-kubernetes", pod=~"ovnkube-node.+", container!="POD"}[{{.elapsed}}:])) by (container)
-  metricName: max-memory-ovnkube-node
-  instant: true
-
-# Nodes
-
-- query: avg(avg_over_time(sum(irate(node_cpu_seconds_total{mode!="idle", mode!="steal"}[2m]) and on (instance) label_replace(kube_node_role{role="master"}, "instance", "$1", "node", "(.+)")) by (instance)[{{.elapsed}}:]))
-  metricName: cpu-masters
-  instant: true
-
-- query: avg(avg_over_time((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)[{{.elapsed}}:]) and on (instance) label_replace(kube_node_role{role="master"}, "instance", "$1", "node", "(.+)"))
-  metricName: memory-masters
-  instant: true
-
-- query: max(max_over_time((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)[{{.elapsed}}:]) and on (instance) label_replace(kube_node_role{role="master"}, "instance", "$1", "node", "(.+)"))
-  metricName: max-memory-masters
-  instant: true
-
-- query: avg(avg_over_time(sum(irate(node_cpu_seconds_total{mode!="idle", mode!="steal"}[2m]) and on (instance) label_replace(kube_node_role{role="worker"}, "instance", "$1", "node", "(.+)")) by (instance)[{{.elapsed}}:]))
-  metricName: cpu-workers
-  instant: true
-
-- query: avg(avg_over_time((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)[{{.elapsed}}:]) and on (instance) label_replace(kube_node_role{role="worker"}, "instance", "$1", "node", "(.+)"))
-  metricName: memory-workers
-  instant: true
-
-- query: max(max_over_time((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)[{{.elapsed}}:]) and on (instance) label_replace(kube_node_role{role="worker"}, "instance", "$1", "node", "(.+)"))
-  metricName: max-memory-workers
-  instant: true
-
-- query: avg(avg_over_time(sum(irate(node_cpu_seconds_total{mode!="idle", mode!="steal"}[2m]) and on (instance) label_replace(kube_node_role{role="infra"}, "instance", "$1", "node", "(.+)")) by (instance)[{{.elapsed}}:]))
-  metricName: cpu-infra
-  instant: true
-
-- query: avg(avg_over_time(sum(irate(node_cpu_seconds_total{mode!="idle", mode!="steal"}[2m]) and on (instance) label_replace(kube_node_role{role="infra"}, "instance", "$1", "node", "(.+)")) by (instance)[{{.elapsed}}:]))
-  metricName: memory-infra
-  instant: true
-
-- query: max(max_over_time((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)[{{.elapsed}}:]) and on (instance) label_replace(kube_node_role{role="infra"}, "instance", "$1", "node", "(.+)"))
-  metricName: max-memory-infra
-  instant: true
-
-# Monitoring and ingress
-
-- query: avg(avg_over_time(sum(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-monitoring", pod=~"prometheus-k8s.+"}[2m])) by (pod)[{{.elapsed}}:]))
-  metricName: cpu-prometheus
-  instant: true
-
-- query: avg(avg_over_time(sum(container_memory_rss{name!="", namespace="openshift-monitoring", pod=~"prometheus-k8s.+"}) by (pod)[{{.elapsed}}:]))
-  metricName: memory-prometheus
-  instant: true
-
-- query: max(max_over_time(sum(container_memory_rss{name!="", namespace="openshift-monitoring", pod=~"prometheus-k8s.+"}) by (pod)[{{.elapsed}}:]))
-  metricName: max-memory-prometheus
-  instant: true
-
-- query: avg(avg_over_time(sum(irate(container_cpu_usage_seconds_total{name!="", namespace="openshift-ingress", pod=~"router-default.+"}[2m])) by (pod)[{{.elapsed}}:]))
-  metricName: cpu-router
-  instant: true
-
-- query: avg(avg_over_time(sum(container_memory_rss{name!="", namespace="openshift-ingress", pod=~"router-default.+"}) by (pod)[{{.elapsed}}:]))
-  metricName: memory-router
-  instant: true
-
-- query: max(max_over_time(sum(container_memory_rss{name!="", namespace="openshift-ingress", pod=~"router-default.+"}) by (pod)[{{.elapsed}}:]))
-  metricName: max-memory-router
-  instant: true
-
-# Cluster
-
-- query: avg_over_time(cluster:memory_usage:ratio[{{.elapsed}}:])
-  metricName: memory-cluster-usage-ratio
-  instant: true
-
-- query: avg_over_time(cluster:memory_usage:ratio[{{.elapsed}}:])
-  metricName: max-memory-cluster-usage-ratio
-  instant: true
-
-- query: avg_over_time(cluster:node_cpu:ratio[{{.elapsed}}:])
-  metricName: cpu-cluster-usage-ratio
-  instant: true
-
-- query: max_over_time(cluster:node_cpu:ratio[{{.elapsed}}:])
-  metricName: max-cpu-cluster-usage-ratio
-  instant: true
+- query: openshift:prometheus_tsdb_head_samples_appended_total:sum{job="prometheus-k8s"}
+  metricName: prometheus-ingestionrate
 
 # Retain the raw CPU seconds totals for comparison
 - query: sum( node_cpu_seconds_total and on (instance) label_replace(kube_node_role{role="worker",role!="infra"}, "instance", "$1", "node", "(.+)") ) by (mode)
