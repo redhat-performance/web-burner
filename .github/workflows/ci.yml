@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # ovn-kubernetes
-      ENABLE_MULTI_NET: "true"    
+      ENABLE_MULTI_NET: "true"
       KIND_INSTALL_INGRESS: "false"
       KIND_INSTALL_METALLB: "false"
-      KIND_INSTALL_PLUGINS: "true"      
+      KIND_INSTALL_PLUGINS: "true"
       KIND_IPV4_SUPPORT: "true"
       KIND_IPV6_SUPPORT: "false"
       KUBECONFIG: "/home/runner/ovn.conf"
@@ -39,14 +39,14 @@ jobs:
       ES_SERVER: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com"
       ES_INDEX: "ripsaw-kube-burner"
       INDEXING: "false"
-      KUBE_BURNER_RELEASE: "1.7.8"
+      KUBE_BURNER_RELEASE: "1.7.12"
       LIMITCOUNT: "1"
       PROBE: "true"
       QPS: "20"
       SCALE: "1"
       SRIOV: "false"
 
-    steps:      
+    steps:
       - uses: actions/checkout@v3
         with:
           repository: 'ovn-org/ovn-kubernetes'
@@ -54,7 +54,7 @@ jobs:
 
       - name: Free up disk space
         run: sudo eatmydata apt-get remove --auto-remove -y aspnetcore-* dotnet-* libmono-* mono-* msbuild php-* php7* ghc-* zulu-*
-        
+
       - name: Disable ufw
         # For IPv6 and Dualstack, ufw (Uncomplicated Firewall) should be disabled.
         # Not needed for KIND deployments, so just disable all the time.
@@ -73,12 +73,12 @@ jobs:
         run: |
           make -C test install-kind
           kubectl get po -A
-          
+
       - name: Kube-burner setup
         run: |
           wget -O kube-burner.tar.gz https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-V${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz
           sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
-          kube-burner version  
+          kube-burner version
 
       - uses: actions/checkout@v3
 
@@ -95,13 +95,13 @@ jobs:
         run: |
           kubectl label node ovn-worker node-role.kubernetes.io/worker-spk="" --overwrite=true
           kubectl get node -o wide
-                
+
       - name: Create lb/serving pods
         timeout-minutes: 15
         run: |
           kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m
           kubectl get po -A -o wide
-          
+
       - name: Curl ES instance
         timeout-minutes: 1
         run: |
