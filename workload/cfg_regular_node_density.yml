@@ -1,5 +1,5 @@
 ---
- 
+
 global:
   measurements:
     - name: podLatency
@@ -7,7 +7,7 @@ global:
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
-    type: elastic
+    type: {{ .INDEXING }}
 
 jobs:
 {{ range $index, $val := untilStep 1 36 1 }}

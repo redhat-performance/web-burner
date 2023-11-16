@@ -36,9 +36,9 @@ jobs:
       BRIDGE: "breth0"
       BURST: "20"
       CRD: "true"
-      ES_SERVER: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com"
-      ES_INDEX: "ripsaw-kube-burner"
-      INDEXING: "false"
+      ES_SERVER: ""
+      ES_INDEX: ""
+      INDEXING: ""
       KUBE_BURNER_RELEASE: "1.7.12"
       LIMITCOUNT: "1"
       PROBE: "true"
@@ -101,11 +101,6 @@ jobs:
         run: |
           kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m
           kubectl get po -A -o wide
-
-      - name: Curl ES instance
-        timeout-minutes: 1
-        run: |
-          curl https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com
 
       - name: Create node-density app/served pods
         timeout-minutes: 10
