@@ -1,5 +1,5 @@
 ---
- 
+
 global:
   measurements:
     - name: podLatency
@@ -7,7 +7,7 @@ global:
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
-    type: elastic
+    type: {{ .INDEXING }}
 
 jobs:
 {{ range $index, $val := untilStep 1 34 1 }}
@@ -98,7 +98,7 @@ jobs:
 {{ range $index, $val := untilStep 1 (add $normalLimit 1|int) 1 }}
   - name: icni2-service-job-{{ $val }}
     jobType: create
-    jobIterations: 1       
+    jobIterations: 1
     qps: {{ $.QPS }}
     burst: {{ $.BURST }}
     namespacedIterations: false

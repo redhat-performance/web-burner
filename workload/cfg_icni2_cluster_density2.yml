@@ -1,5 +1,5 @@
 ---
- 
+
 global:
   measurements:
     - name: podLatency
@@ -7,7 +7,7 @@ global:
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
-    type: elastic
+    type: {{ .INDEXING }}
 
 jobs:
   - name: cluster-density
@@ -30,7 +30,7 @@ jobs:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
         replicas: 25
         inputVars:
-          probe: "{{ $.PROBE }}"        
+          probe: "{{ $.PROBE }}"
       - objectTemplate: objectTemplates/node_density_pod_service.yml
         replicas: 25
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml

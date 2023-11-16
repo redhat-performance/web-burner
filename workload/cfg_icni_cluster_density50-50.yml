@@ -1,5 +1,5 @@
 ---
- 
+
 global:
   measurements:
     - name: podLatency
@@ -7,7 +7,7 @@ global:
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
-    type: elastic
+    type: {{ .INDEXING }}
 
 jobs:
 
@@ -20,7 +20,7 @@ jobs:
     burst: {{ .BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: f5-served-ns-{{ $val }} 
+    namespace: f5-served-ns-{{ $val }}
     podWait: false
     waitWhenFinished: false
     verifyObjects: true
@@ -35,11 +35,11 @@ jobs:
       - objectTemplate: objectTemplates/cluster_density_dep_served_f5.yml
         replicas: 3
         inputVars:
-          ns: {{ $val }}       
+          ns: {{ $val }}
       - objectTemplate: objectTemplates/cluster_density_pod_service_f5.yml
         replicas: 3
         inputVars:
-          ns: {{ $val }}            
+          ns: {{ $val }}
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 17
       - objectTemplate: objectTemplates/cluster_density_dep_service.yml
@@ -53,7 +53,7 @@ jobs:
     burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
-    namespace: f5-served-ns 
+    namespace: f5-served-ns
     podWait: false
     waitWhenFinished: false
     verifyObjects: true
@@ -95,7 +95,7 @@ jobs:
     burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
-    namespace: f5-served-ns 
+    namespace: f5-served-ns
     podWait: false
     waitWhenFinished: false
     verifyObjects: true
@@ -120,7 +120,7 @@ jobs:
       - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
-          ns: group-e-{{ $val }}                       
+          ns: group-e-{{ $val }}
 {{ end }}
 
   - name: app-job-3
@@ -130,7 +130,7 @@ jobs:
     burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
-    namespace: f5-served-ns 
+    namespace: f5-served-ns
     podWait: false
     waitWhenFinished: false
     verifyObjects: true
@@ -164,7 +164,7 @@ jobs:
       - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
-          ns: group-h-{{ $val }}                             
+          ns: group-h-{{ $val }}
 {{ end }}
 
   - name: app-job-4
@@ -208,7 +208,7 @@ jobs:
       - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
-          ns: group-k-{{ $val }}                             
+          ns: group-k-{{ $val }}
 {{ end }}
 
   - name: app-job-5
@@ -218,7 +218,7 @@ jobs:
     burst: {{ .BURST }}
     namespacedIterations: true
     cleanup: false
-    namespace: f5-served-ns 
+    namespace: f5-served-ns
     podWait: false
     waitWhenFinished: true
     verifyObjects: true
@@ -234,9 +234,9 @@ jobs:
       - objectTemplate: objectTemplates/cluster_density_pod_service_ports.yml
         replicas: 1
         inputVars:
-          ns: group-l-{{ $val }}                   
+          ns: group-l-{{ $val }}
 {{ end }}
-        
+
 {{ $servedLimit := mul .LIMITCOUNT .SCALE | int }}
 {{ range $index, $val := untilStep 1 (add $servedLimit 1|int) 1 }}
   - name: job-2-{{ $val }}
@@ -246,7 +246,7 @@ jobs:
     burst: {{ $.BURST }}
     namespacedIterations: false
     cleanup: false
-    namespace: served-ns-{{ $val }} 
+    namespace: served-ns-{{ $val }}
     podWait: false
     waitWhenFinished: true
     verifyObjects: true

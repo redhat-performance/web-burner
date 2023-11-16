@@ -5,7 +5,7 @@ global:
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
-    type: elastic
+    type: {{ .INDEXING }}
 
 jobs:
 {{ $servedLimit := mul .LIMITCOUNT .SCALE | int }}

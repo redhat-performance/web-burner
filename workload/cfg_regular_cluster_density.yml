@@ -1,5 +1,5 @@
 ---
- 
+
 global:
   measurements:
     - name: podLatency
@@ -7,7 +7,7 @@ global:
     esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
     defaultIndex: {{ .ES_INDEX }}
-    type: elastic
+    type: {{ .INDEXING }}
 
 jobs:
   # - name: delete-networks-job
@@ -22,7 +22,7 @@ jobs:
   #   objects:
   #   - kind: Pod
   #     labelSelector: {kube-burner-job: init-job}
-        
+
 
 {{ range $index, $val := untilStep 1 36 1 }}
   - name: job-{{ $val }}
@@ -32,7 +32,7 @@ jobs:
     burst: 20
     namespacedIterations: false
     cleanup: false
-    namespace: normal-ns-{{ $val }} 
+    namespace: normal-ns-{{ $val }}
     podWait: false
     waitWhenFinished: false
     verifyObjects: true
@@ -52,7 +52,7 @@ jobs:
       - objectTemplate: objectTemplates/node_density_pod_service.yml
         replicas: 38
         inputVars:
-          ns: {{ $val }}       
+          ns: {{ $val }}
       - objectTemplate: objectTemplates/cluster_density_dep_served.yml
         replicas: 5
 {{ end }}

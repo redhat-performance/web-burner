@@ -41,13 +41,13 @@ Kube-burner configs are templated to created vz equivalent workload on 120 node 
 	├── 20 normal-ns
 		└── 30 configmaps, 38 secrets, 38 normal pods and services, 5 deployments with 2 replica pods on each namespace
 	├── 1 served-ns
-		└── 105 icni2.0 app pods 
+		└── 105 icni2.0 app pods
 	└── 2 app-served-ns
 		├── 1 service(15 ports) with 84 pod endpoints, 1 service(15 ports) with 56 pod endpoints, 1 service(15 ports) with 25 pod endpoints
 		├── 3 service(15 ports each) with 24 pod endpoints, 3 service(15 ports each) with 14 pod endpoints
 		├── 6 service(15 ports each) with 12 pod endpoints, 6 service(15 ports each) with 10 pod endpoints, 6 service(15 ports each) with 9 pod endpoints
 		├── 12 service(15 ports each) with 8 pod endpoints, 12 service(15 ports each) with 6 pod endpoints, 12 service(15 ports each) with 5 pod endpoints
-		└── 29 service(15 ports each) with 4 pod endpoints, 29 service(15 ports each) with 6 pod endpoints		
+		└── 29 service(15 ports each) with 4 pod endpoints, 29 service(15 ports each) with 6 pod endpoints
 ├── cfg_icni2_cluster_density2.yml
 	├── 20 normal-ns
 		└── 30 configmaps, 38 secrets, 38 normal pods and services, 5 deployments with 2 replica pods on each namespace
@@ -111,7 +111,7 @@ Kube-burner configs are templated to created vz equivalent workload on 120 node 
 >   ]
 > }
 > ```
-> 
+>
 > Then restart the docker service:
 > ```
 > $ docker network prune
@@ -226,8 +226,9 @@ $ export BFD=${BFD:-false}
 $ export BRIDGE=breth0
 $ export BURST=${BURST:-20}
 $ export CRD=false
-$ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
-$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export ES_INDEX=""
+$ export ES_SERVER=""
+$ export INDEXING=""
 $ export LIMITCOUNT=1
 $ export PROBE=false
 $ export QPS=${QPS:-20}
@@ -273,19 +274,19 @@ sh-4.4$ ip a
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
        valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host 
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
-2: eth0@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc noqueue state UP group default 
+2: eth0@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc noqueue state UP group default
     link/ether 0a:58:0a:f4:00:05 brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet 10.244.0.5/24 brd 10.244.0.255 scope global eth0
        valid_lft forever preferred_lft forever
-    inet6 fe80::858:aff:fef4:5/64 scope link 
+    inet6 fe80::858:aff:fef4:5/64 scope link
        valid_lft forever preferred_lft forever
-3: net1@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+3: net1@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
     link/ether e2:18:03:3d:9a:6a brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet 192.168.219.1/21 brd 192.168.223.255 scope global net1
        valid_lft forever preferred_lft forever
-    inet6 fe80::e018:3ff:fe3d:9a6a/64 scope link 
+    inet6 fe80::e018:3ff:fe3d:9a6a/64 scope link
        valid_lft forever preferred_lft forever
 sh-4.4$ exit
 ```
@@ -375,8 +376,9 @@ $ export BFD=true
 $ export BRIDGE=breth0
 $ export BURST=${BURST:-20}
 $ export CRD=false
-$ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
-$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+$ export ES_INDEX=""
+$ export ES_SERVER=""
+$ export INDEXING=""
 $ export LIMITCOUNT=1
 $ export PROBE=true
 $ export QPS=${QPS:-20}
@@ -427,33 +429,33 @@ Defaulted container "bfd" out of: bfd, patch
        valid_lft forever preferred_lft forever
     inet 172.18.0.10/32 scope global lo
        valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host 
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
-2: eth0@if26: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc noqueue state UP group default 
+2: eth0@if26: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc noqueue state UP group default
     link/ether 0a:58:0a:f4:01:13 brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet 10.244.1.19/24 brd 10.244.1.255 scope global eth0
        valid_lft forever preferred_lft forever
-    inet6 fe80::858:aff:fef4:113/64 scope link 
+    inet6 fe80::858:aff:fef4:113/64 scope link
        valid_lft forever preferred_lft forever
-3: net1@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+3: net1@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
     link/ether ce:e5:5b:28:87:43 brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet 192.168.219.1/21 brd 192.168.223.255 scope global net1
        valid_lft forever preferred_lft forever
-    inet6 fe80::cce5:5bff:fe28:8743/64 scope link 
+    inet6 fe80::cce5:5bff:fe28:8743/64 scope link
        valid_lft forever preferred_lft forever
 
 sh-5.1# ip r
-default via 10.244.1.1 dev eth0 
-10.96.0.0/16 via 10.244.1.1 dev eth0 
-10.244.0.0/24 nhid 18 via 192.168.216.2 dev net1 proto 196 metric 20 
-10.244.0.0/16 via 10.244.1.1 dev eth0 
-10.244.1.0/24 dev eth0 proto kernel scope link src 10.244.1.19 
-10.244.2.0/24 nhid 17 via 192.168.216.3 dev net1 proto 196 metric 20 
-100.64.0.0/16 via 10.244.1.1 dev eth0 
+default via 10.244.1.1 dev eth0
+10.96.0.0/16 via 10.244.1.1 dev eth0
+10.244.0.0/24 nhid 18 via 192.168.216.2 dev net1 proto 196 metric 20
+10.244.0.0/16 via 10.244.1.1 dev eth0
+10.244.1.0/24 dev eth0 proto kernel scope link src 10.244.1.19
+10.244.2.0/24 nhid 17 via 192.168.216.3 dev net1 proto 196 metric 20
+100.64.0.0/16 via 10.244.1.1 dev eth0
 192.168.216.0/21 dev net1 proto kernel scope link src 192.168.219.1
 
 sh-5.1# vtysh -c "show bfd peers brief" | grep up
-160369874  192.168.219.1                            192.168.216.2                           up             
+160369874  192.168.219.1                            192.168.216.2                           up
 807179051  192.168.219.1                            192.168.216.3                           up
 ```
 
@@ -699,52 +701,52 @@ Check the macvlan network attachment definition:
 $ kubectl get net-attach-def -n serving-ns-0
 NAME          AGE
 sriov-net-0   17m
- 
+
 $ kubectl describe net-attach-def -n serving-ns-0
-Name:         sriov-net-0                                                                                                                                                                                         
-Namespace:    serving-ns-0                                                                              
-Labels:       kube-burner-index=0          
+Name:         sriov-net-0
+Namespace:    serving-ns-0
+Labels:       kube-burner-index=0
               kube-burner-job=create-networks-job
-              kube-burner-uuid=1234                                                                     
-Annotations:  <none>                     
-API Version:  k8s.cni.cncf.io/v1    
-Kind:         NetworkAttachmentDefinition                                                               
-Metadata:                       
+              kube-burner-uuid=1234
+Annotations:  <none>
+API Version:  k8s.cni.cncf.io/v1
+Kind:         NetworkAttachmentDefinition
+Metadata:
   Creation Timestamp:  2023-08-03T08:16:31Z
-  Generation:          1                 
-  Managed Fields:             
-    API Version:  k8s.cni.cncf.io/v1                                                                    
-    Fields Type:  FieldsV1    
-    fieldsV1:                            
-      f:metadata:               
-        f:labels:                                                                                       
-          .:                             
-          f:kube-burner-index:  
-          f:kube-burner-job:                                                                            
-          f:kube-burner-uuid:            
-      f:spec:                                                                                           
-        .:                                                                                              
-        f:config:                                                                                       
-    Manager:         kube-burner                                                                                                                                                                                
-    Operation:       Update                                                                                                                                                                                     
+  Generation:          1
+  Managed Fields:
+    API Version:  k8s.cni.cncf.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:labels:
+          .:
+          f:kube-burner-index:
+          f:kube-burner-job:
+          f:kube-burner-uuid:
+      f:spec:
+        .:
+        f:config:
+    Manager:         kube-burner
+    Operation:       Update
     Time:            2023-08-03T08:16:31Z
   Resource Version:  395173
-  UID:               37e11ee8-5074-48c7-bdad-9a5821f042c6                                                                                                                                                       
-Spec:                   
-  Config:  {            
-  "cniVersion": "0.3.1",                                                                                                                                                                                        
+  UID:               37e11ee8-5074-48c7-bdad-9a5821f042c6
+Spec:
+  Config:  {
+  "cniVersion": "0.3.1",
   "name": "internal-net",
-  "plugins": [          
-    {                   
+  "plugins": [
+    {
       "type": "macvlan",
-      "master": "br-ex",                                                                                                                                                                                        
+      "master": "br-ex",
       "mode": "bridge",
-      "ipam": {        
+      "ipam": {
         "type": "static"
-      }                                                                                                                                                                                                         
-    },                
-    {                 
-      "capabilities": {                                                                                                                                                                                         
+      }
+    },
+    {
+      "capabilities": {
         "mac": true,
         "ips": true
       },
@@ -798,4 +800,4 @@ OpenShift Local (formally CRC) does not yet support ovn-kubernetes as CNI (see [
 3. Copy and Paste the openshift/kubernetes cluster's kubeconfig file content into the configs/webburner_input.yaml and configs/webburner_cleanup.yaml files.
 4. Create the container with `docker build -t arca-web-burner .`
 5. To run a web-burner workload `cat configs/webburner_input.yaml | docker run -i arca-web-burner -s run-web-burner --debug -f -`
-6. To delete a web-burner workload `cat configs/webburner_input.yaml | docker run -i arca-kube-burner -s delete-web-burner --debug -f -`  
+6. To delete a web-burner workload `cat configs/webburner_input.yaml | docker run -i arca-kube-burner -s delete-web-burner --debug -f -`
