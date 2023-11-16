@@ -12,8 +12,8 @@ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4b
 export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.12}
 export KUBECONFIG=/home/kni/clusterconfigs/auth/kubeconfig
 #The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
-export LIMITCOUNT=${LIMITCOUNT:-35} 
-export PROBE=${PROBE:-false}      # requires BFD=true 
+export LIMITCOUNT=${LIMITCOUNT:-35}
+export PROBE=${PROBE:-false}      # requires BFD=true
 export QPS=${QPS:-20}
 export SCALE=${SCALE:-1}
 export SRIOV=${SRIOV:-true}       # set to false will create macvlan network attachment definitions instead
@@ -29,7 +29,7 @@ kube_burner_exists=$(which kube-burner)
 
 if [ $? -ne 0 ]; then
     echo "Installing kube-burner"
-    wget -O kube-burner.tar.gz https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-V${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz
+    curl  https://github.com/cloud-bulldozer/kube-burner/releases/download/v${KUBE_BURNER_RELEASE}/kube-burner-V${KUBE_BURNER_RELEASE}-Linux-x86_64.tar.gz -Lo kube-burner.tar.gz
     sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
 fi
 
@@ -55,7 +55,7 @@ else
       echo "Not enough nodes to label" # there should be enough unlabelled nodes to label them
       exit 1
   fi
-  count=0 
+  count=0
   while [[ $count -le $lb_count-1 ]]; do
     echo "Label worker nodes.."
     kubectl label node ${all_workers[$count]} node-role.kubernetes.io/worker-spk="" --overwrite=true
@@ -67,7 +67,7 @@ if $SRIOV ; then
   # Find the right SR-IOV PF
   sriov_nic=""
   for i in $(kubectl get nodes | grep worker-spk | awk '{print $1}')
-  do 
+  do
     nic=$(ssh -i /home/kni/.ssh/id_rsa -o StrictHostKeyChecking=no core@$i "sudo ovs-vsctl list-ports br-ex | head -1")
     if [[ $sriov_nic == "" ]]; then
       echo "Setting SR-IOV PF to $nic"
@@ -85,7 +85,7 @@ if $SRIOV ; then
 
   echo "Waiting for the worker-spk node to be ready.."
   for mcp in $(kubectl get mcp --no-headers | awk '{print $1}')
-  do 
+  do
     kubectl wait --for=condition=Updated --timeout=3600s mcp $mcp
     echo "Nice! $mcp is updated"
   done
@@ -105,6 +105,6 @@ sleep 60 # sleep for a minute before actual workload
 
 
 echo "Lets create ICNI2 workloads..$uuid"
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml 
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml
 
 
