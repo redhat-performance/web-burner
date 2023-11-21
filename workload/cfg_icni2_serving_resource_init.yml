@@ -10,25 +10,6 @@ global:
 
 jobs:
 
-  - name: init-job
-    jobType: create
-    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
-    qps: 20
-    burst: 20
-    namespacedIterations: true
-    cleanup: false
-    namespace: serving-ns
-    podWait: false
-    waitWhenFinished: true
-    verifyObjects: true
-    errorOnVerify: true
-    jobIterationDelay: 0s
-    jobPause: 0s
-    preLoadImages: false
-    objects:
-      - objectTemplate: objectTemplates/patch_script_configmap.yml
-        replicas: 1
-
   - name: create-networks-job
     jobType: create
     jobIterations: {{ mul .LIMITCOUNT .SCALE }}
