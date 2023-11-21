@@ -72,13 +72,13 @@ Kube-burner configs are templated to created vz equivalent workload on 120 node 
 ├── cfg_icni2_serving_resource_init_single.yml
 	├── 1 sriov network for serving namespace
 	├── 1 serving-ns
-		└── 1 frr config map, 1 patch configmap, 4 fake spk pods
+		└── 1 frr config map, 4 emulated spk pods
 	└── 1 served-ns
 		└── 1 icni2.0 test pod for bfd session
 ├── cfg_icni2_serving_resource_init.yml
 	├── 35 sriov network for 35 serving namespace
 	├── 35 serving-ns
-		└── 1 frr config map, 1 patch configmap, 4 fake spk pods on each namespace
+		└── 1 frr config map, 4 emulated spk pods on each namespace
 	└── 35 served-ns
 		└── 1 icni2.0 test pod on each namespace for bfd session
 ├── cfg_regular_cluster_density.yml

@@ -32,22 +32,6 @@ spec:
         image: quay.io/mukrishn/jetski:latest
         command: ["/bin/sh","-c"]
         args: ["sleep infinity"]
-      - name: patch
-        image: quay.io/mukrishn/jetski:latest
-        imagePullPolicy: IfNotPresent
-        command: ["/bin/sh","-c"]
-        args:
-        - sleep infinity # 10 && bash /var/tmp/patch_script.sh && sleep infinity
-        volumeMounts:
-        - name: kubeconfig
-          mountPath: /tmp/
-        - name: patch-script
-          mountPath: /var/tmp/
-        env:
-        - name: KUBECONFIG
-          value: "/tmp/config"
-        - name: pod_name
-          value: pod-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
       volumes:
         - name: config-volume
           configMap:
@@ -55,9 +39,6 @@ spec:
         - name: kubeconfig
           secret:
             secretName: kubeconfig
-        - name: patch-script
-          configMap:
-            name: patch-script
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
