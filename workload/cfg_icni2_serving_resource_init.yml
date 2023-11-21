@@ -126,25 +126,6 @@ jobs:
       - objectTemplate: objectTemplates/cm_frr.yml
         replicas: 1
 
-  - name: create-secrets-job
-    jobType: create
-    jobIterations: {{ mul .LIMITCOUNT .SCALE }}
-    qps: 20
-    burst: 20
-    namespacedIterations: true
-    cleanup: false
-    namespace: serving-ns
-    podWait: false
-    waitWhenFinished: false
-    verifyObjects: true
-    errorOnVerify: false
-    jobIterationDelay: 0s
-    jobPause: 0s
-    preLoadImages: false
-    objects:
-      - objectTemplate: objectTemplates/secret_kubeconfig.yml
-        replicas: 1
-
   - name: init-served-job
     jobType: create
     jobIterations: {{ mul .LIMITCOUNT .SCALE }}
