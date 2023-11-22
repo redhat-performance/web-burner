@@ -203,11 +203,6 @@ $ git clone https://github.com/redhat-performance/web-burner.git
 $ cd web-burner
 ```
 
-Create a secret from the KUBECONFIG:
-```
-$ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
-```
-
 Make sure kube-burner is installed in the appropiate version:
 ```
 $ kube-burner version
@@ -636,11 +631,6 @@ Clone the web-burner repository:
 ```
 $ git clone https://github.com/redhat-performance/web-burner.git
 $ cd web-burner
-```
-
-Create a secret from the KUBECONFIG:
-```
-$ kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
 ```
 
 Export the following variables:
