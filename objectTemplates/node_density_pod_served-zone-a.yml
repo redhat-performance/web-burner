@@ -55,7 +55,7 @@ spec:
             operator: DoesNotExist
   topologySpreadConstraints:
   - maxSkew: 1
-    topologyKey: kubernetes.io/hostname
+    topologyKey: topologySpreadConstraints-zone-A
     whenUnsatisfiable: ScheduleAnyway
     labelSelector:
       matchLabels:

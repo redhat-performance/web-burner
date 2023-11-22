@@ -106,6 +106,6 @@ sleep 60 # sleep for a minute before actual workload
 
 
 echo "Lets create ICNI2 workloads..$uuid"
-kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics_full.yml
+kube-burner init -c ${1} -t ${token} --uuid $(uuidgen) --prometheus-url https://${prometheus_url} -m workload/metrics.yml
 
 
