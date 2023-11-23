@@ -34,8 +34,6 @@ if [ $? -ne 0 ]; then
     sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
 fi
 
-kubectl create secret generic kubeconfig --from-file=config=$KUBECONFIG --dry-run=client --output=yaml > objectTemplates/secret_kubeconfig.yml
-
 if [ $# -eq 0 ]; then
     echo "Pass kube-burner config"
     exit 1
