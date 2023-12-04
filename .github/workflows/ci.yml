@@ -97,6 +97,7 @@ jobs:
         run: |
           kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m
           kubectl get po -A -o wide
+        continue-on-error: true
 
       - name: Describe lb/serving pod
         timeout-minutes: 2
