@@ -98,6 +98,11 @@ jobs:
           kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m
           kubectl get po -A -o wide
 
+      - name: Describe lb/serving pod
+        timeout-minutes: 2
+        run: |
+          kubectl -n serving-ns-0 describe $(kubectl get po -n serving-ns-0 -o name | head -n1)
+
       - name: Create node-density app/served pods
         timeout-minutes: 10
         run: |
