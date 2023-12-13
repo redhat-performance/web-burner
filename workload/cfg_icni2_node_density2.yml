@@ -32,6 +32,7 @@ jobs:
         replicas: 1
 {{ end }}
 
+{{- $zoneA := div $normalLimit 2 }}
 {{ range $index, $val := untilStep 1 (add $normalLimit 1|int) 1 }}
   - name: normal-job-{{ $val }}
     jobType: create
@@ -49,7 +50,11 @@ jobs:
     jobPause: 0s
     preLoadImages: false
     objects:
-      - objectTemplate: objectTemplates/node_density_pod_served.yml
+      {{- if gt $index $zoneA}}
+      - objectTemplate: objectTemplates/node_density_pod_served-zone-b.yml
+      {{- else }}
+      - objectTemplate: objectTemplates/node_density_pod_served-zone-a.yml
+      {{- end }}
         replicas: 60
         inputVars:
           probe: "{{ $.PROBE }}"
