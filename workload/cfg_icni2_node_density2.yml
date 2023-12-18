@@ -50,7 +50,7 @@ jobs:
     preLoadImages: false
     objects:
       - objectTemplate: objectTemplates/node_density_pod_served.yml
-        replicas: 60
+        replicas: 120
         inputVars:
           probe: "{{ $.PROBE }}"
         waitOptions:

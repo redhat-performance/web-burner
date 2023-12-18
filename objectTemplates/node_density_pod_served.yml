@@ -6,6 +6,7 @@ metadata:
   labels:
     app: pod-served-{{ .Replica }}
     ns: served-ns-{{ .Replica }}
+    spreadcontraint: pause
 spec:
   containers:
   - name: perfapp-1
@@ -21,6 +22,10 @@ spec:
       initialDelaySeconds: 5       
     ports:
     - containerPort: 8080        
+    resources:
+      requests:
+        memory: "10Mi"
+        cpu: "10m"
   - args:
     - sleep
     - infinity
@@ -28,6 +33,10 @@ spec:
     image: quay.io/centos/centos
     imagePullPolicy: IfNotPresent
     {{ if contains .probe "true" }}
+    resources:
+      requests:
+        memory: "10Mi"
+        cpu: "10m"
     readinessProbe:
       exec:
         command:
@@ -44,3 +53,10 @@ spec:
         - matchExpressions:
           - key: node-role.kubernetes.io/worker-spk
             operator: DoesNotExist
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        spreadcontraint: pause
