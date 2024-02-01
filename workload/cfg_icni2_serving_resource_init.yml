@@ -164,6 +164,8 @@ jobs:
     objects:
       - objectTemplate: objectTemplates/adminPolicyBasedExternalRoute.yml
         replicas: 1
+        inputVars:
+          icni: "{{ $.ICNI }}"
 {{ end }}
 
   - name: serving-job
