@@ -38,6 +38,7 @@ jobs:
       CRD: "true"
       ES_SERVER: ""
       ES_INDEX: ""
+      ICNI: "true"
       INDEXING: ""
       KUBE_BURNER_RELEASE: "1.7.12"
       LIMITCOUNT: "1"

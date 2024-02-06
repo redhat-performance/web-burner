@@ -1,7 +1,7 @@
 ---
 kind: Deployment
 apiVersion: apps/v1
-metadata:    
+metadata:
   name: dep-serving-{{ .Iteration }}-{{ .Replica }}-{{.JobName }}
   namespace: serving-ns-{{ .Iteration }}
 spec:
@@ -96,5 +96,5 @@ spec:
     matchLabels:
      serving: true-{{ .Replica }}
   strategy:
-    type: RollingUpdate  
+    type: RollingUpdate
 
