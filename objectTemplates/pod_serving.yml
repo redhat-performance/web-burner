@@ -14,7 +14,9 @@ spec:
         gateway-ip: "192.168.{{ add 218 .Replica }}.{{ add 1 .Iteration }}"
         k8s.ovn.org/routing-namespaces: served-ns-{{ .Iteration }}
         k8s.ovn.org/routing-network: serving-ns-{{ .Iteration }}/sriov-net-{{ .Iteration }}
+        {{ if contains .bfd "true" }}
         k8s.ovn.org/bfd-enabled: ""
+        {{ end }}
         {{ end }}
         k8s.v1.cni.cncf.io/networks: |-
           [{
@@ -57,6 +59,7 @@ spec:
         - name: stats
           containerPort: 9000
           protocol: TCP
+        {{ if contains .bfd "true" }}
         readinessProbe:
           exec:
             command:
@@ -68,6 +71,7 @@ spec:
                 grep up
           initialDelaySeconds: 5
           periodSeconds: 5
+        {{ end }}
         securityContext:
           privileged: true
         volumeMounts:

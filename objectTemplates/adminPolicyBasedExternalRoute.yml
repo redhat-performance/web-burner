@@ -24,8 +24,9 @@ spec:
             {{ else }}
             lb: nonexisting-lb-{{ .Iteration }}
             {{ end }}
-
+        {{ if contains .bfd "true" }}
         bfdEnabled: true
+        {{ end }}
         namespaceSelector:
           matchLabels:
             {{ if contains .icni "true" }}

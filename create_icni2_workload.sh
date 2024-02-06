@@ -14,7 +14,7 @@ export INDEXING=${INDEXING:-elastic}
 export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.12}
 #The limit count is used to calculate servedlimit and normallimit. For a 120 node cluster the default count is 35, for other size clusters use this formula to calculate. limit count = (35 * cluster_size) // 120
 export LIMITCOUNT=${LIMITCOUNT:-35}
-export PROBE=${PROBE:-false}      # requires BFD=true
+export PROBE=${PROBE:-false}
 export QPS=${QPS:-20}
 export SCALE=${SCALE:-1}
 export SRIOV=${SRIOV:-true}       # set to false will create macvlan network attachment definitions instead

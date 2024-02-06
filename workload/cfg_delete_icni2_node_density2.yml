@@ -1,5 +1,5 @@
 ---
- 
+
 jobs:
 {{ $normalLimit := mul .LIMITCOUNT .SCALE | int }}
 {{ range $index, $val := untilStep 1 (add $normalLimit 1|int) 1 }}
@@ -22,7 +22,7 @@ jobs:
 
       - apiVersion: v1
         kind: Pod
-        labelSelector: {kube-burner-job: served-job-{{ $val }}}   
+        labelSelector: {kube-burner-job: served-job-{{ $val }}}
 
       - apiVersion: project.openshift.io/v1
         kind: Project
