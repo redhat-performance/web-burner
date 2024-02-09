@@ -5,10 +5,12 @@ on:
     branches: [ "*" ]
     paths-ignore:
     - '**.md'
+    - '**.sh'
   pull_request:
     branches: [ "*" ]
     paths-ignore:
     - '**.md'
+    - '**.sh'
   schedule:
     - cron: 0 3 * * *
 
