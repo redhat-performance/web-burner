@@ -166,6 +166,7 @@ jobs:
         replicas: 1
         inputVars:
           icni: "{{ $.ICNI }}"
+          bfd: "{{ $.BFD }}"
 {{ end }}
 
   - name: serving-job
@@ -184,7 +185,8 @@ jobs:
     jobPause: 0s
     preLoadImages: false
     objects:
-      - objectTemplate: {{ if contains .BFD "true" }} objectTemplates/pod_serving.yml {{ else }} objectTemplates/pod_serving_no_bfd.yml {{ end }}
+      - objectTemplate: objectTemplates/pod_serving.yml
         replicas: 4
         inputVars:
           crd: "{{ $.CRD }}"
+          bfd: "{{ $.BFD }}"

@@ -32,10 +32,10 @@ jobs:
       OVN_GATEWAY_MODE: "shared"
       OVN_HYBRID_OVERLAY_ENABLE: "false"
       # web-burner
-      BFD: "false"
+      BFD: "true"
       BRIDGE: "breth0"
       BURST: "20"
-      CRD: "false"
+      CRD: "true"
       ES_SERVER: ""
       ES_INDEX: ""
       ICNI: "true"
