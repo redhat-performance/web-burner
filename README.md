@@ -217,19 +217,19 @@ OS/Arch: linux amd64
 
 Export the following variables:
 ```
-$ export BFD=${BFD:-false}
-$ export BRIDGE=breth0
-$ export BURST=${BURST:-20}
-$ export CRD=false
-$ export ES_INDEX=""
-$ export ES_SERVER=""
-$ export ICNI=true
-$ export INDEXING=""
-$ export LIMITCOUNT=1
-$ export PROBE=true
-$ export QPS=${QPS:-20}
-$ export SCALE=${SCALE:-1}
-$ export SRIOV=false
+export BFD=${BFD:-false}
+export BRIDGE=breth0
+export BURST=${BURST:-20}
+export CRD=false
+export ES_INDEX=""
+export ES_SERVER=""
+export ICNI=true
+export INDEXING=""
+export LIMITCOUNT=1
+export PROBE=true
+export QPS=${QPS:-20}
+export SCALE=${SCALE:-1}
+export SRIOV=false
 ```
 
 Create the load balancing/serving resources (took 2m):
@@ -368,19 +368,19 @@ $ kubectl get po -A | grep served | grep Running | wc -l
 
 Export the following variables:
 ```
-$ export BFD=true
-$ export BRIDGE=breth0
-$ export BURST=${BURST:-20}
-$ export CRD=false
-$ export ES_INDEX=""
-$ export ES_SERVER=""
-$ export ICNI=true
-$ export INDEXING=""
-$ export LIMITCOUNT=1
-$ export PROBE=true
-$ export QPS=${QPS:-20}
-$ export SCALE=${SCALE:-1}
-$ export SRIOV=false
+export BFD=true
+export BRIDGE=breth0
+export BURST=${BURST:-20}
+export CRD=false
+export ES_INDEX=""
+export ES_SERVER=""
+export ICNI=true
+export INDEXING=""
+export LIMITCOUNT=1
+export PROBE=true
+export QPS=${QPS:-20}
+export SCALE=${SCALE:-1}
+export SRIOV=false
 ```
 
 Create the load balancing/serving resources (took 2m):
@@ -637,16 +637,19 @@ $ cd web-burner
 
 Export the following variables:
 ```
-$ export BFD=${BFD:-false}
-$ export BRIDGE=${BRIDGE:-br-ex}
-$ export BURST=${BURST:-20}
-$ export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
-$ export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
-$ export LIMITCOUNT=1
-$ export PROBE=false
-$ export QPS=${QPS:-20}
-$ export SCALE=${SCALE:-1}
-$ export SRIOV=false
+export BFD=${BFD:-false}
+export BRIDGE=${BRIDGE:-br-ex}
+export BURST=${BURST:-20}
+export CRD=false
+export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
+export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+export ICNI=true
+export INDEXING=""
+export LIMITCOUNT=1
+export PROBE=false
+export QPS=${QPS:-20}
+export SCALE=${SCALE:-1}
+export SRIOV=false
 ```
 
 Make sure kube-burner is installed in the appropiate version:

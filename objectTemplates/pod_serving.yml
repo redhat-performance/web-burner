@@ -12,8 +12,13 @@ spec:
       annotations:
         {{ if contains .crd "false" }}
         gateway-ip: "192.168.{{ add 218 .Replica }}.{{ add 1 .Iteration }}"
+        {{ if contains .icni "true" }}
         k8s.ovn.org/routing-namespaces: served-ns-{{ .Iteration }}
         k8s.ovn.org/routing-network: serving-ns-{{ .Iteration }}/sriov-net-{{ .Iteration }}
+        {{ else }}
+        k8s.ovn.org/routing-namespaces: nonexisting-ns-{{ .Iteration }}
+        k8s.ovn.org/routing-network: nonexisting-ns-{{ .Iteration }}/sriov-net-{{ .Iteration }}
+        {{ end }}
         {{ if contains .bfd "true" }}
         k8s.ovn.org/bfd-enabled: ""
         {{ end }}

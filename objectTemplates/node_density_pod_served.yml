@@ -18,9 +18,9 @@ spec:
       periodSeconds: 30
       failureThreshold: 1
       timeoutSeconds: 15
-      initialDelaySeconds: 5       
+      initialDelaySeconds: 5
     ports:
-    - containerPort: 8080        
+    - containerPort: 8080
   - args:
     - sleep
     - infinity
