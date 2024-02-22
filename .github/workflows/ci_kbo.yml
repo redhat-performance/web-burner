@@ -99,7 +99,7 @@ jobs:
       - name: Create lb/serving pods
         timeout-minutes: 15
         run: |
-          kube-burner ocp web-burner-init --uuid 1234 --timeout 10m --gc=false --sriov=${SRIOV} --bridge=${BRIDGE} --alerting=false --local-indexing=false
+          kube-burner-ocp web-burner-init --uuid 1234 --timeout 10m --gc=false --sriov=${SRIOV} --bridge=${BRIDGE} --alerting=false --local-indexing=false
           kubectl get po -A -o wide
         continue-on-error: true
 
@@ -112,8 +112,7 @@ jobs:
         timeout-minutes: 10
         run: |
           echo 5000 | sudo tee /proc/sys/kernel/keys/maxkeys
-          kube-burner init -c workload/cfg_icni2_node_density2.yml --uuid 1235
-          kube-burner ocp web-burner-node-density --uuid 1235 --gc=false --sriov=${SRIOV} --bridge=${BRIDGE} --alerting=false --local-indexing=false --probe=${PROBE}
+          kube-burner-ocp web-burner-node-density --uuid 1235 --gc=false --sriov=${SRIOV} --bridge=${BRIDGE} --alerting=false --local-indexing=false --probe=${PROBE}
           kubectl get ns
           kubectl get po -n served-ns-0 -o wide | head
           echo "Number of serving running pods (expect 4):"
