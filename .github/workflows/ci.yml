@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        OVN_ENABLE_INTERCONNECT: ["true", "false"]
+        ic: ["true", "false"]
     env:
       # ovn-kubernetes
       ENABLE_MULTI_NET: "true"
@@ -33,7 +33,7 @@ jobs:
       KIND_IPV6_SUPPORT: "false"
       KUBECONFIG: "/home/runner/ovn.conf"
       OVN_DISABLE_SNAT_MULTIPLE_GWS: "true"
-      #OVN_ENABLE_INTERCONNECT: "false"
+      OVN_ENABLE_INTERCONNECT: ${{ matrix.ic }}
       OVN_GATEWAY_MODE: "shared"
       OVN_HYBRID_OVERLAY_ENABLE: "false"
       # web-burner
