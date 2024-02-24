@@ -90,10 +90,6 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - name: Cordon master node
-        run: |
-          kubectl cordon ovn-control-plane
-
       - name: Label worker-lb node
         # ovn-worker for lbs/serving pods and ovn-worker2 for apps/served pods
         run: |

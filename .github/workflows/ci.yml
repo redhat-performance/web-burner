@@ -55,7 +55,7 @@ jobs:
       SRIOV: "false"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: 'ovn-org/ovn-kubernetes'
           fetch-depth: 1
