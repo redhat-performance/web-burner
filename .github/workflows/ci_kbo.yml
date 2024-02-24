@@ -55,7 +55,7 @@ jobs:
       SRIOV: "false"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: 'ovn-org/ovn-kubernetes'
           fetch-depth: 1
@@ -88,7 +88,7 @@ jobs:
           sudo tar -xvzf kube-burner-ocp.tar.gz -C /usr/local/bin/
           kube-burner-ocp version
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Label worker-lb node
         # ovn-worker for lbs/serving pods and ovn-worker2 for apps/served pods
