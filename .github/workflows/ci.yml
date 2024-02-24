@@ -20,6 +20,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bfd: ["true", "false"]
+        crd: ["true", "false"]
+        ic:  ["true", "false"]
     env:
       # ovn-kubernetes
       ENABLE_MULTI_NET: "true"
@@ -30,14 +35,14 @@ jobs:
       KIND_IPV6_SUPPORT: "false"
       KUBECONFIG: "/home/runner/ovn.conf"
       OVN_DISABLE_SNAT_MULTIPLE_GWS: "true"
-      OVN_ENABLE_INTERCONNECT: "true"
+      OVN_ENABLE_INTERCONNECT: ${{ matrix.ic }}
       OVN_GATEWAY_MODE: "shared"
       OVN_HYBRID_OVERLAY_ENABLE: "false"
       # web-burner
-      BFD: "false"
+      BFD: ${{ matrix.bfd }}
       BRIDGE: "breth0"
       BURST: "20"
-      CRD: "false"
+      CRD: ${{ matrix.crd }}
       ES_SERVER: ""
       ES_INDEX: ""
       ICNI: "true"
@@ -50,7 +55,7 @@ jobs:
       SRIOV: "false"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: 'ovn-org/ovn-kubernetes'
           fetch-depth: 1
@@ -73,6 +78,7 @@ jobs:
 
       - name: Kind setup
         timeout-minutes: 30
+
         run: |
           make -C test install-kind
           kubectl get po -A
@@ -83,11 +89,7 @@ jobs:
           sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
           kube-burner version
 
-      - uses: actions/checkout@v3
-
-      - name: Cordon master node
-        run: |
-          kubectl cordon ovn-control-plane
+      - uses: actions/checkout@v4
 
       - name: Label worker-lb node
         # ovn-worker for lbs/serving pods and ovn-worker2 for apps/served pods
@@ -99,6 +101,8 @@ jobs:
       - name: Create lb/serving pods
         timeout-minutes: 15
         run: |
+          echo "BFD: $BFD"
+          echo "CRD: $CRD"
           kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m
           kubectl get po -A -o wide
         continue-on-error: true
