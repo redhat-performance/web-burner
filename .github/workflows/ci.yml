@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        OVN_ENABLE_INTERCONNECT: [true, false]
+        OVN_ENABLE_INTERCONNECT: ["true", "false"]
     env:
       # ovn-kubernetes
       ENABLE_MULTI_NET: "true"
