@@ -22,7 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ic: ["true", "false"]
+        bfd: ["true", "false"]
+        crd: ["true", "false"]
+        ic:  ["true", "false"]
     env:
       # ovn-kubernetes
       ENABLE_MULTI_NET: "true"
@@ -37,10 +39,10 @@ jobs:
       OVN_GATEWAY_MODE: "shared"
       OVN_HYBRID_OVERLAY_ENABLE: "false"
       # web-burner
-      BFD: "false"
+      BFD: ${{ matrix.bfd }}
       BRIDGE: "breth0"
       BURST: "20"
-      CRD: "false"
+      CRD: ${{ matrix.crd }}
       ES_SERVER: ""
       ES_INDEX: ""
       ICNI: "true"
@@ -103,6 +105,8 @@ jobs:
       - name: Create lb/serving pods
         timeout-minutes: 15
         run: |
+          echo "BFD: $BFD"
+          echo "CRD: $CRD"
           kube-burner init -c workload/cfg_icni2_serving_resource_init.yml --uuid 1234 --timeout 10m
           kubectl get po -A -o wide
         continue-on-error: true
