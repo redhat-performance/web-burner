@@ -82,7 +82,7 @@ jobs:
           make -C test install-kind
           kubectl get po -A
 
-      - name: Kube-burner setup
+      - name: Kube-burner-ocp setup
         run: |
           curl https://github.com/kube-burner/kube-burner-ocp/releases/download/v${KUBE_BURNER_OCP_RELEASE}/kube-burner-ocp-V${KUBE_BURNER_OCP_RELEASE}-linux-x86_64.tar.gz -Lo kube-burner-ocp.tar.gz
           sudo tar -xvzf kube-burner-ocp.tar.gz -C /usr/local/bin/
