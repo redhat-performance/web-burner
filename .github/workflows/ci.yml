@@ -89,6 +89,10 @@ jobs:
           sudo tar -xvzf kube-burner.tar.gz -C /usr/local/bin/
           kube-burner version
 
+      - name: Cordon master node
+        run: |
+          kubectl cordon ovn-control-plane
+
       - uses: actions/checkout@v4
 
       - name: Label worker-lb node
