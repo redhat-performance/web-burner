@@ -1,13 +1,18 @@
 ---
 
 global:
+  gc: false
   measurements:
     - name: podLatency
-  indexerConfig:
-    esServers: ["{{.ES_SERVER}}"]
+      thresholds:
+        - conditionType: Ready
+          metric: P99
+          threshold: 2m0s
+indexers:
+  - esServers: ["{{.ES_SERVER}}"]
     insecureSkipVerify: true
-    defaultIndex: {{ .ES_INDEX }}
-    type: {{ .INDEXING }}
+    defaultIndex: {{.ES_INDEX}}
+    type: {{.INDEXING}}
 
 jobs:
   - name: cluster-density
