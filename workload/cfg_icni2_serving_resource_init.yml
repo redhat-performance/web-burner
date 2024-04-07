@@ -18,8 +18,8 @@ jobs:
   - name: create-networks-job
     jobType: create
     jobIterations: {{ mul .LIMITCOUNT .SCALE }}
-    qps: 10
-    burst: 10
+    qps: 20
+    burst: 20
     namespacedIterations: {{ if contains .SRIOV "true" }} false {{ else }} true {{ end }}
     cleanup: false
     namespace: {{ if contains .SRIOV "true" }} openshift-sriov-network-operator {{ else }} serving-ns {{ end }}
@@ -27,7 +27,7 @@ jobs:
     waitWhenFinished: false
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 1s
+    jobIterationDelay: 0s
     jobPause: 0s
     preLoadImages: false
     objects:
@@ -48,7 +48,7 @@ jobs:
     waitWhenFinished: false
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 1s
+    jobIterationDelay: 0s
     jobPause: 0s
     preLoadImages: false
     objects:
@@ -67,7 +67,7 @@ jobs:
     waitWhenFinished: false
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 1s
+    jobIterationDelay: 0s
     jobPause: 0s
     preLoadImages: false
     objects:
@@ -86,7 +86,7 @@ jobs:
     waitWhenFinished: false
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 1s
+    jobIterationDelay: 0s
     jobPause: 0s
     preLoadImages: false
     objects:
@@ -105,7 +105,7 @@ jobs:
     waitWhenFinished: false
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 1s
+    jobIterationDelay: 0s
     jobPause: 0s
     preLoadImages: false
     objects:
@@ -124,7 +124,7 @@ jobs:
     waitWhenFinished: false
     verifyObjects: true
     errorOnVerify: false
-    jobIterationDelay: 1s
+    jobIterationDelay: 0s
     jobPause: 0s
     preLoadImages: false
     objects:
