@@ -47,7 +47,7 @@ jobs:
       ES_INDEX: ""
       ICNI: "true"
       INDEXING: ""
-      KUBE_BURNER_OCP_RELEASE: "1.2.6"
+      KUBE_BURNER_OCP_RELEASE: "1.2.7"
       LIMITCOUNT: "1"
       PROBE: "true"
       QPS: "20"
