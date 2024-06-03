@@ -1,4 +1,4 @@
-name: CI_kbo
+name: CI_kbo_cd
 
 on:
   push:
