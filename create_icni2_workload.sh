@@ -8,7 +8,7 @@ export BRIDGE=${BRIDGE:-br-ex}    # breth0 for kind.sh ovn-kubernetes clusters
 export BURST=${BURST:-20}
 export CRD=${CRD:=false}          # use the new AdminPolicyBasedExternalRoute instead of the legacy pod/ns annotations
 export ES_INDEX=${ES_INDEX:-ripsaw-kube-burner}
-export ES_SERVER=${ES_SERVER:-https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com}
+export ES_SERVER=${ES_SERVER:-http://es-instance.com:9200}
 export ICNI=${ICNI:=true}         # enable or disable ICNI functionality. Requires PROBE=false
 export INDEXING=${INDEXING:-elastic}
 export KUBE_BURNER_RELEASE=${KUBE_BURNER_RELEASE:-1.7.12}
