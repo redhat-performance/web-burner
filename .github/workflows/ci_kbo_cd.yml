@@ -61,7 +61,7 @@ jobs:
           fetch-depth: 1
 
       - name: Free up disk space
-        run: sudo eatmydata apt-get remove --auto-remove -y aspnetcore-* dotnet-* libmono-* mono-* msbuild php-* php7* ghc-* zulu-*
+        run: sudo eatmydata apt-get remove --auto-remove -y aspnetcore-* dotnet-* libmono-* mono-* msbuild php-* php7* ghc-* zulu-* || echo "Freed"
 
       - name: Disable ufw
         # For IPv6 and Dualstack, ufw (Uncomplicated Firewall) should be disabled.
